@@ -14,9 +14,9 @@ Supported versions are:
 - more can be added (PRs are welcome)
 
 Install linux :
-git clone --recursive https://github.com/SUIJUNG/PPPwn
-cd PPPwn
-sudo pip install -r tool.txt
+- git clone --recursive https://github.com/SUIJUNG/PPPwn
+- cd PPPwn
+- sudo pip install -r tool.txt
 
 Credit : 
 - TheOfficialFloW
