@@ -13,10 +13,10 @@ Supported versions are:
 - FW 11.00
 - more can be added (PRs are welcome)
 
-Requirements :
-- Python https://www.python.org/downloads/
-- Scapy https://pypi.org/project/scapy/
-- Npcap https://npcap.com/#download
+Install linux :
+git clone --recursive https://github.com/SUIJUNG/PPPwn
+cd PPPwn
+sudo pip install -r tool.txt
 
 Credit : 
 - TheOfficialFloW
