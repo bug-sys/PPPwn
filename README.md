@@ -15,7 +15,7 @@ Supported versions are:
 
 Install linux :
 ```sh
- git clone --recursive https://github.com/SUIJUNG/PPPwn
+git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
 ```sh
 cd PPPwn
