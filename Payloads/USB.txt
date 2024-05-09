@@ -1,1 +1,1 @@
-payload1100.bin = to USB payload.bin
+goldhen.bin = to USB payload.bin
