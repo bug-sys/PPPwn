@@ -1,1 +1,0 @@
-sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100
