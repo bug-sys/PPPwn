@@ -1,16 +1,11 @@
-# PPPwnAB - HEN PS4
-
-Supported versions :
-- FW 9.00
-- FW 11.00
-- more can be added (PRs are welcome)
+# PPPwn - HEN PS4 11.00
 
 Install :
 ```sh
-git clone --recursive https://github.com/SUIJUNG/PPPwnAB
+git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
 ```sh
-sudo bash /root/PPPwnAB/install.sh
+sudo /root/PPPwn/i
 ```
 
 Credit : 
