@@ -8,7 +8,17 @@ check_eth0() {
     fi
 }
 
+# Timer function to restart system after 10 minutes
+timer() {
+    sleep 600 # 10 minutes timer
+    echo "No response restarting system..."
+    sudo reboot
+}
+
 # Main script
+# Start timer
+timer &
+
 # Loop until eth0 is connected
 while true; do
     # Check and reconnect eth0
