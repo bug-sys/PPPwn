@@ -4,10 +4,6 @@ echo "Start script create MBR and filesystem"
 
 DEV_EMMC=/dev/mmcblk1
 
-echo "Start backup u-boot default"
-
-dd if="${DEV_EMMC}" of=/boot/u-boot-default.img bs=1M count=4
-
 echo "Start create MBR and partittion"
 
 parted -s "${DEV_EMMC}" mklabel msdos
