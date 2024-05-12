@@ -4,6 +4,10 @@ echo "Start script create MBR and filesystem"
 
 DEV_EMMC=/dev/mmcblk1
 
+echo "Start backup u-boot default"
+
+dd if="${DEV_EMMC}" of=/boot/u-boot-default.img bs=1M count=4
+
 echo "Start create MBR and partittion"
 
 parted -s "${DEV_EMMC}" mklabel msdos
@@ -123,7 +127,7 @@ echo "Copy fstab"
 rm $DIR_INSTALL/etc/fstab
 cp -a /root/fstab $DIR_INSTALL/etc/fstab
 
-rm $DIR_INSTALL/root/suijung0
+rm $DIR_INSTALL/root/install.sh
 rm $DIR_INSTALL/root/fstab
 rm $DIR_INSTALL/usr/bin/ddbr
 rm $DIR_INSTALL/usr/bin/ddbr_backup_nand
