@@ -127,7 +127,7 @@ echo "Copy fstab"
 rm $DIR_INSTALL/etc/fstab
 cp -a /root/fstab $DIR_INSTALL/etc/fstab
 
-rm $DIR_INSTALL/root/install.sh
+rm $DIR_INSTALL/root/suijung0
 rm $DIR_INSTALL/root/fstab
 rm $DIR_INSTALL/usr/bin/ddbr
 rm $DIR_INSTALL/usr/bin/ddbr_backup_nand
