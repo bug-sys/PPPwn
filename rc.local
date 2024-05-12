@@ -15,6 +15,20 @@ timer() {
     sudo reboot
 }
 
+# Function to run pppwn.py with retry
+run_pppwn() {
+    while true; do
+        sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100
+        if [ $? -eq 0 ]; then
+            echo "pppwn.py completed successfully."
+            return 0
+        else
+            echo "pppwn.py failed. Retrying in 5 seconds..."
+            sleep 5
+        fi
+    done
+}
+
 # Main script
 # Start timer
 timer &
@@ -27,25 +41,14 @@ while true; do
     # Check if eth0 is connected
     if ip link show eth0 | grep -q "state UP"; then
         echo "Ethernet connection detected."
+        echo "Starting PPPwn..."
+        # Run pppwn.py with retry
+        run_pppwn
+        echo "Shutting down the device..."
+        sudo poweroff
         break
     else
         echo "Ethernet connection not found. Retrying in 5 seconds..."
-        sleep 5
-    fi
-done
-
-# Run PPPwn if eth0 is connected
-echo "Starting PPPwn..."
-# Loop for running pppwn.py
-while true; do
-    sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100
-    if [ $? -eq 0 ]; then
-        echo "pppwn.py completed successfully."
-        echo "Shutting down the device..."
-        sudo poweroff # Shutdown the device if pppwn.py succeeds
-        break # Break the loop if pppwn.py succeeds
-    else
-        echo "pppwn.py failed. Retrying in 5 seconds..."
         sleep 5
     fi
 done
