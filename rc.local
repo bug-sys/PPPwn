@@ -1,6 +1,54 @@
 #!/bin/bash
 
+# Function to check and reconnect eth0
+check_eth0() {
+    if ! ip link show eth0 | grep -q "state UP"; then
+        echo "Connection lost! Reconnecting..."
+        sudo ifup eth0
+    fi
+}
 
+# Timer function to restart system after 10 minutes
+timer() {
+    sleep 600 # 10 minutes timer
+    echo "No response restarting system..."
+    sudo reboot
+}
+
+# Main script
+# Start timer
+timer &
+
+# Loop until eth0 is connected
+while true; do
+    # Check and reconnect eth0
+    check_eth0
+    
+    # Check if eth0 is connected
+    if ip link show eth0 | grep -q "state UP"; then
+        echo "Ethernet connection detected."
+        break
+    else
+        echo "Ethernet connection not found. Retrying in 5 seconds..."
+        sleep 5
+    fi
+done
+
+# Run PPPwn if eth0 is connected
+echo "Starting PPPwn..."
+# Loop for running pppwn.py
+while true; do
+    sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100
+    if [ $? -eq 0 ]; then
+        echo "pppwn.py completed successfully."
+        echo "Shutting down the device..."
+        sudo poweroff # Shutdown the device if pppwn.py succeeds
+        break # Break the loop if pppwn.py succeeds
+    else
+        echo "pppwn.py failed. Retrying in 5 seconds..."
+        sleep 5
+    fi
+done
 
 exit 0
 
