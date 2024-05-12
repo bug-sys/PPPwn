@@ -2,41 +2,46 @@
 
 # Function to check and reconnect eth0
 check_eth0() {
-    ip link show eth0 &> /dev/null || sudo ifup eth0
+    if ! ip link show eth0 | grep -q "state UP"; then
+        echo "Connection lost! Reconnecting..."
+        sudo ifup eth0
+    fi
 }
 
-# Function to monitor console and take action
-monitor_console() {
-    tail -f /var/log/syslog | grep --line-buffered -e "pppwn.py failed. Retrying in 5 seconds..." -e "Starting PPPwn..." | while read line ; do
-        if [[ "$line" == *"pppwn.py failed. Retrying in 5 seconds..."* ]]; then
-            sudo systemctl restart networking
-        elif [[ "$line" == *"Starting PPPwn..."* ]]; then
-            # Take action here, for example:
-            # Insert action you want to perform when "Starting PPPwn..." appears
-            echo "Action triggered when Starting PPPwn... detected."
-        fi
-    done
+# Function to disconnect and reconnect eth0 automatically
+disconnect_reconnect_eth0() {
+    echo "Disconnecting eth0..."
+    sudo ifdown eth0
+    sleep 5
+    echo "Reconnecting eth0..."
+    sudo ifup eth0
 }
 
 # Timer function to restart system after 10 minutes
 timer() {
-    sleep 600 && sudo reboot &
+    sleep 600 # 10 minutes timer
+    echo "No response restarting system..."
+    sudo reboot
 }
 
 # Main script
 # Start timer
-timer
-
-# Monitor console
-monitor_console &
+timer &
 
 # Loop until eth0 is connected
-while ! ip link show eth0 | grep -q "state UP"; do
-    echo "Ethernet connection not found. Retrying in 5 seconds..."
+while true; do
+    # Check and reconnect eth0
     check_eth0
-    sleep 5
+    
+    # Check if eth0 is connected
+    if ip link show eth0 | grep -q "state UP"; then
+        echo "Ethernet connection detected."
+        break
+    else
+        echo "Ethernet connection not found. Retrying in 5 seconds..."
+        sleep 5
+    fi
 done
-echo "Ethernet connection detected."
 
 # Run PPPwn if eth0 is connected
 echo "Starting PPPwn..."
@@ -49,7 +54,9 @@ while true; do
         sudo poweroff # Shutdown the device if pppwn.py succeeds
         break # Break the loop if pppwn.py succeeds
     else
-        echo "pppwn.py failed. Retrying in 5 seconds..."
+        echo "pppwn.py failed. Trying to reconnect eth0..."
+        disconnect_reconnect_eth0
+        echo "Retrying pppwn.py in 5 seconds..."
         sleep 5
     fi
 done
