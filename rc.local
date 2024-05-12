@@ -44,6 +44,10 @@ while true; do
 done
 
 # Run PPPwn if eth0 is connected
+# Disconnect and reconnect eth0 before starting PPPwn
+disconnect_reconnect_eth0
+
+# Run PPPwn if eth0 is connected
 echo "Starting PPPwn..."
 # Loop for running pppwn.py
 while true; do
