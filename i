@@ -1,5 +1,4 @@
 #!/bin/bash
-sudo apt-get update
 sudo bash /root/PPPwn/update_python.sh
 sudo rm /lib/systemd/system/bluetooth.target
 sudo rm /lib/systemd/system/network-online.target
