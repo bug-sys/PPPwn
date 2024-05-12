@@ -14,7 +14,7 @@ apt upgrade -y
 apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
 
 # Unduh sumber Python terbaru
-PYTHON_VERSION="3.12.3"  # Ganti dengan versi Python terbaru yang diinginkan
+PYTHON_VERSION="3.10.0"  # Ganti dengan versi Python terbaru yang diinginkan
 wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
 
 # Ekstrak arsip Python
