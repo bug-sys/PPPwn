@@ -33,7 +33,7 @@ run_pppwn() {
 # Start timer
 timer &
 
-# Loop until eth0 is connected
+# Loop until pppwn.py completes successfully
 while true; do
     # Check and reconnect eth0
     check_eth0
