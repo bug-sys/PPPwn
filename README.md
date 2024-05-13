@@ -4,6 +4,11 @@ Install :
 ```sh
 git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
+
+```sh
+sudo bash /root/PPPwn/e
+```
+
 ```sh
 sudo bash /root/PPPwn/i
 ```
