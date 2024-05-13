@@ -6,8 +6,4 @@ sudo rm /lib/systemd/system/bluetooth.target
 sudo rm /lib/systemd/system/network-online.target
 sudo mv -f /root/PPPwn/rc.local /etc/rc.local
 sudo chmod +x /etc/rc.local
-echo "*******************************************"
-echo -e '\033[36mInstall complete,\033[33m Rebooting\033[0m'
-echo "*******************************************"
-sleep 5
-reboot
+sudo bash /root/PPPwn/emmc
