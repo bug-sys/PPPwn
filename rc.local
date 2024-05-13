@@ -1,25 +1,48 @@
 #!/bin/bash
 
-# Fungsi untuk memeriksa dan menyambungkan eth0
+# Function to check and reconnect eth0
 check_eth0() {
-    ip link show eth0 | grep -q "state UP" || sudo ifup eth0
+    if ! ip link show eth0 | grep -q "state UP"; then
+        echo "Connection lost! Reconnecting..."
+        sudo ifup eth0
+    fi
 }
 
-# Fungsi untuk menjalankan pppwn.py dengan retry
+# Function to run pppwn.py with retry
 run_pppwn() {
     while true; do
+        # Run pppwn.py in background
         sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100 &
-        timeout 180 bash -c "sleep $timeout_duration; kill -9 $!"
-        [ $? -eq 0 ] && sudo shutdown now || sudo reboot
+        # Set a timeout for pppwn.py
+        timeout_duration=180 # 3 minutes timeout
+        pppwn_pid=$!
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
+        wait $pppwn_pid
+        if [ $? -eq 0 ]; then
+            echo "pppwn.py completed successfully."
+            echo "Shutting down the device..."
+            sudo shutdown now
+        else
+            echo "pppwn.py failed. Restarting the device..."
+            sudo reboot
+        fi
     done
 }
 
-# Skrip utama
+# Main script
+# Loop until pppwn.py completes successfully
 while true; do
+    # Check and reconnect eth0
     check_eth0
+    
+    # Check if eth0 is connected
     if ip link show eth0 | grep -q "state UP"; then
-        echo "Ethernet connection detected. Starting PPPwn..."
+        echo "Ethernet connection detected."
+        echo "Starting PPPwn..."
+        # Run pppwn.py with retry
         run_pppwn
+        # If pppwn.py fails, it will restart the device
+        # So, no need to execute any further commands here
     else
         echo "Ethernet connection not found. Retrying in 5 seconds..."
         sleep 5
