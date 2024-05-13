@@ -4,10 +4,12 @@ Install :
 ```sh
 git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
+External / SDCARD
 
 ```sh
 sudo bash /root/PPPwn/e
 ```
+Internal / EMMC
 
 ```sh
 sudo bash /root/PPPwn/i
