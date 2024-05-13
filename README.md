@@ -8,7 +8,7 @@ Install external / SDCARD
 ```sh
 sudo bash /root/PPPwn/e
 ```
-Install internal / EMMC
+Khusus install internal / EMMC
 ```sh
 sudo bash /root/PPPwn/i
 ```
