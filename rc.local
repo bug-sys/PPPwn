@@ -14,7 +14,7 @@ run_pppwn() {
         # Run pppwn.py in background
         sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100 &
         # Set a timeout for pppwn.py
-        timeout_duration=300 # 5 minutes timeout
+        timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
         { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
         wait $pppwn_pid
