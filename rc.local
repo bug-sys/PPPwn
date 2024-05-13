@@ -20,7 +20,8 @@ run_pppwn() {
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo "pppwn.py completed successfully."
-            return 0
+            echo "Shutting down the device..."
+            sudo shutdown now
         else
             echo "pppwn.py failed. Restarting the device..."
             sudo reboot
