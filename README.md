@@ -12,7 +12,7 @@ Khusus install internal / EMMC
 ```sh
 sudo bash /root/PPPwn/i
 ```
-Hapus semua file yang ada di sdcard lalu copy file linux emmc ke sdcard lalu jalankan :
+Hapus semua file yang ada di sdcard lalu copy semua file linux emmc ke sdcard lalu jalankan :
 ```sh
 sudo bash /root/PPPwn/m
 ```
