@@ -1,6 +1,6 @@
 # PPPwn - HEN PS4 11.00
 
-INSTALL :
+COMMAND INSTALL :
 ```sh
 git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
