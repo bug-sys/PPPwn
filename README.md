@@ -1,16 +1,14 @@
 # PPPwn - HEN PS4 11.00
 
-Install :
+Frimware :
 ```sh
 git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
-External / SDCARD
-
+Install external / SDCARD
 ```sh
 sudo bash /root/PPPwn/e
 ```
-Internal / EMMC
-
+Install internal / EMMC
 ```sh
 sudo bash /root/PPPwn/i
 ```
