@@ -8,31 +8,27 @@ check_eth0() {
     fi
 }
 
-# Timer function to restart system after 10 minutes
-timer() {
-    sleep 600 # 10 minutes timer
-    echo "No response restarting system..."
-    sudo reboot
-}
-
 # Function to run pppwn.py with retry
 run_pppwn() {
     while true; do
-        sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100
+        # Run pppwn.py in background
+        sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100 &
+        # Set a timeout for pppwn.py
+        timeout_duration=300 # 5 minutes timeout
+        pppwn_pid=$!
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
+        wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo "pppwn.py completed successfully."
             return 0
         else
-            echo "pppwn.py failed. Retrying in 5 seconds..."
-            sleep 5
+            echo "pppwn.py failed. Restarting the device..."
+            sudo reboot
         fi
     done
 }
 
 # Main script
-# Start timer
-timer &
-
 # Loop until pppwn.py completes successfully
 while true; do
     # Check and reconnect eth0
@@ -44,9 +40,8 @@ while true; do
         echo "Starting PPPwn..."
         # Run pppwn.py with retry
         run_pppwn
-        echo "Shutting down the device..."
-        sudo poweroff
-        break
+        # If pppwn.py fails, it will restart the device
+        # So, no need to execute any further commands here
     else
         echo "Ethernet connection not found. Retrying in 5 seconds..."
         sleep 5
