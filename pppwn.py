@@ -167,7 +167,7 @@ class Exploit:
 		for frag in frags:self.s.send(Ether(src=self.source_mac,dst=self.target_mac)/frag)
 		print('1')
 def main():
-	parser=ArgumentParser('pppwn.py');parser.add_argument('--interface',required=True);parser.add_argument('--fw',default='1100');parser.add_argument('--stage1',default='/root/PPPwn/stage1/stage1.bin');parser.add_argument('--stage2',default='/root/PPPwn/stage2/stage2.bin');args=parser.parse_args()
+	parser=ArgumentParser('pppwn.py');parser.add_argument('--interface',required=True);parser.add_argument('--fw',default='1100');parser.add_argument('--stage1',default='/root/PPPwn/stage1.bin');parser.add_argument('--stage2',default='/root/PPPwn/stage2.bin');args=parser.parse_args()
 	with open(args.stage1,mode='rb')as f:stage1=f.read()
 	with open(args.stage2,mode='rb')as f:stage2=f.read()
 	if args.fw=='11.00':offs=OffsetsFirmware_1100()
