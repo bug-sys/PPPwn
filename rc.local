@@ -3,7 +3,6 @@
 # Function to check and reconnect enp0s3
 check_enp0s3() {
     if ! ip link show enp0s3 | grep -q "state UP"; then
-        echo "Koneksi terputus! Menyambungkan kembali..."
         sudo ifup enp0s3
     fi
 }
@@ -19,11 +18,17 @@ run_pppwn() {
         { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
-            echo "HEN berhasil diselesaikan."
-            echo "Mematikan perangkat..."
+            echo "
+              _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
+             | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
+             | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
+      _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
+     (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
+"
             sudo shutdown now
         else
-            echo "HEN GAGAL. Memulai ulang perangkat..."
+            echo "[*]HEN GAGAL. MEMULAI ULANG PERANGKAT..."
+            sleep 10
             sudo reboot
         fi
     done
@@ -37,21 +42,21 @@ while true; do
     
     # Check if enp0s3 is connected
     if ip link show enp0s3 | grep -q "state UP"; then
-        echo "PS4 terdeteksi."
+        echo "[+]PS4 TERDETEKSI"
         echo "
-  __  __ _____ __  __ _   _ _        _    ___      _   _ _____ _   _       
- |  \/  | ____|  \/  | | | | |      / \  |_ _|    | | | | ____| \ | |      
- | |\/| |  _| | |\/| | | | | |     / _ \  | |     | |_| |  _| |  \| |      
- | |  | | |___| |  | | |_| | |___ / ___ \ | |     |  _  | |___| |\  |_ _ _ 
- |_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|    |_| |_|_____|_| \_(_|_|_)
-                                                                           
+              __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
+             |  \/  | ____|  \/  | | | | |      / \  |_ _|         | | | | ____| \ | |        
+             | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
+      _ _ _ _| |  | | |___| |  | | |_| | |___ / ___ \ | |  |_____| |  _  | |___| |\  |_ _ _ _ 
+     (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
+                                                                                                                                                                                                                                             
 "
         # Run pppwn.py with retry
         run_pppwn
         # If pppwn.py fails, it will restart the device
         # So, no need to execute any further commands here
     else
-        echo "TIDAK TERHUBUNG, SILAHKAN HUBUNGKAN PS4 ANDA KE STB MEMAKAI KABEL LAN, MENGULANG DALAM 5 DETIK ..."
+        echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK ..."
         sleep 5
     fi
 done
