@@ -23,7 +23,7 @@ run_pppwn() {
             echo "Mematikan perangkat..."
             sudo shutdown now
         else
-            echo "HEN gagal. Memulai ulang perangkat..."
+            echo "HEN GAGAL. Memulai ulang perangkat..."
             sudo reboot
         fi
     done
