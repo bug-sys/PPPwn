@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Function to check and reconnect eth0
-check_eth0() {
-    if ! ip link show eth0 | grep -q "state UP"; then
+# Function to check and reconnect enp0s3
+check_enp0s3() {
+    if ! ip link show enp0s3 | grep -q "state UP"; then
         echo "Koneksi terputus! Menyambungkan kembali..."
-        sudo ifup eth0
+        sudo ifup enp0s3
     fi
 }
 
@@ -12,19 +12,7 @@ check_eth0() {
 run_pppwn() {
     while true; do
         # Run pppwn.py in background
-        sudo python3 /root/PPPwn/pppwn.py --interface=eth0 --fw=1100 &
-        echo -n "Menjalankan pppwn.py..."
-        sleep 1
-        echo -n "."
-        sleep 1
-        echo -n "."
-        sleep 1
-        echo -n "."
-        sleep 1
-        echo -n "."
-        sleep 1
-        echo ""
-
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100
         # Set a timeout for pppwn.py
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
@@ -44,11 +32,11 @@ run_pppwn() {
 # Main script
 # Loop until pppwn.py completes successfully
 while true; do
-    # Check and reconnect eth0
-    check_eth0
+    # Check and reconnect enp0s3
+    check_enp0s3
     
-    # Check if eth0 is connected
-    if ip link show eth0 | grep -q "state UP"; then
+    # Check if enp0s3 is connected
+    if ip link show enp0s3 | grep -q "state UP"; then
         echo "PS4 terdeteksi."
         echo "
   __  __ _____ __  __ _   _ _        _    ___      _   _ _____ _   _       
