@@ -3,7 +3,7 @@
 # Function to check and reconnect eth0
 check_eth0() {
     if ! ip link show eth0 | grep -q "state UP"; then
-        echo "Connection lost! Reconnecting..."
+        echo "Koneksi terputus! Menyambungkan kembali..."
         sudo ifup eth0
     fi
 }
@@ -19,11 +19,11 @@ run_pppwn() {
         { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
-            echo "pppwn.py completed successfully."
-            echo "Shutting down the device..."
+            echo "HEN berhasil diselesaikan."
+            echo "Mematikan perangkat..."
             sudo shutdown now
         else
-            echo "pppwn.py failed. Restarting the device..."
+            echo "HEN gagal. Memulai ulang perangkat..."
             sudo reboot
         fi
     done
@@ -37,14 +37,21 @@ while true; do
     
     # Check if eth0 is connected
     if ip link show eth0 | grep -q "state UP"; then
-        echo "Ethernet connection detected."
-        echo "Starting PPPwn..."
+        echo "PS4 terdeteksi."
+        echo "
+  __  __ _____ __  __ _   _ _        _    ___      _   _ _____ _   _       
+ |  \/  | ____|  \/  | | | | |      / \  |_ _|    | | | | ____| \ | |      
+ | |\/| |  _| | |\/| | | | | |     / _ \  | |     | |_| |  _| |  \| |      
+ | |  | | |___| |  | | |_| | |___ / ___ \ | |     |  _  | |___| |\  |_ _ _ 
+ |_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|    |_| |_|_____|_| \_(_|_|_)
+                                                                           
+"
         # Run pppwn.py with retry
         run_pppwn
         # If pppwn.py fails, it will restart the device
         # So, no need to execute any further commands here
     else
-        echo "Ethernet connection not found. Retrying in 5 seconds..."
+        echo "TIDAK TERHUBUNG, SILAHKAN HUBUNGKAN PS4 ANDA KE STB MEMAKAI KABEL LAN, MENGULANG DALAM 5 DETIK ..."
         sleep 5
     fi
 done
