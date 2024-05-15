@@ -1,31 +1,31 @@
 #!/bin/bash
 
-# Function to check and reconnect enp0s3
-check_enp0s3() {
-    if ! ip link show enp0s3 | grep -q "state UP"; then
-        sudo ifup enp0s3
+# Function to check and reconnect end0
+check_end0() {
+    if ! ip link show end0 | grep -q "state UP"; then
+        sudo ifup end0
     fi
 }
 
-# Function to run ./pppwn with retry
+# Function to run pppwn with retry
 run_pppwn() {
     while true; do
-        # Run ./pppwn
-        ./pppwn_output=$(./root/PPPwn/./pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
-        # Check if ./pppwn failed or did not produce relevant output
-        if [ $? -ne 0 ] || ! echo "$./pppwn_output" | grep -q '\[.*?\]'; then
-            echo "[*] ./pppwn gagal atau tidak menghasilkan output yang relevan."
+        # Run pppwn
+        pppwn_output=$(sudo /root/PPPwn/pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
+        # Check if pppwn failed or did not produce relevant output
+        if [ $? -ne 0 ] || ! echo "$pppwn_output" | grep -q '\[.*\]'; then
+            echo "[*] pppwn gagal atau tidak menghasilkan output yang relevan."
             echo "[*] Memulai ulang perangkat."
             sleep 10
             sudo reboot
         fi
-        # Set a timeout for ./pppwn
+        # Set a timeout for pppwn
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
-        ( sleep "$timeout_duration"; kill -9 $pppwn_pid; ) & # Set a timeout for ./pppwn
+        ( sleep "$timeout_duration"; kill -9 $pppwn_pid; ) & # Set a timeout for pppwn
         # Loading bar based on output
         while true; do
-            progress=$(echo "$./pppwn_output" | grep -oP '\[.*?\]' | tail -n 1)
+            progress=$(echo "$pppwn_output" | grep -oP '\[.*\]' | tail -n 1)
             if [ -n "$progress" ]; then
                 echo -ne "Processing: $progress\r"
             fi
@@ -54,13 +54,13 @@ run_pppwn() {
 }
 
 # Main script
-# Loop until ./pppwn completes successfully
+# Loop until pppwn completes successfully
 while true; do
-    # Check and reconnect enp0s3
-    check_enp0s3
+    # Check and reconnect end0
+    check_end0
     
-    # Check if enp0s3 is connected
-    if ip link show enp0s3 | grep -q "state UP"; then
+    # Check if end0 is connected
+    if ip link show end0 | grep -q "state UP"; then
         echo "[+]PS4 TERDETEKSI !!!"
         echo "
               __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
@@ -70,9 +70,9 @@ while true; do
      (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
                                                                                                                                                                                                                                              
 "
-        # Run ./pppwn with retry
+        # Run pppwn with retry
         run_pppwn
-        # If ./pppwn fails, it will restart the device
+        # If pppwn fails, it will restart the device
         # So, no need to execute any further commands here
     else
         echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
