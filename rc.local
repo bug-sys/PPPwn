@@ -10,8 +10,8 @@ check_enp0s3() {
 # Function to run pppwn.py with retry
 run_pppwn() {
     while true; do
-        # Run pppwn.py
-        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100
+        # Run pppwn.py and pipe its output to pv for progress bar
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 | pv -l -s 100 >/dev/null
         # Set a timeout for pppwn.py
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
