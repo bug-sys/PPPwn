@@ -7,33 +7,15 @@ check_enp0s3() {
     fi
 }
 
-# Function to run ./pppwn with retry
+# Function to run pppwn with retry
 run_pppwn() {
     while true; do
-        # Run ./pppwn
-        pppwn_output=$(sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
-        # Check if ./pppwn failed or did not produce relevant output
-        if [ $? -ne 0 ]; then
-            echo "[*] ./pppwn gagal."
-            echo "[*] Memulai ulang perangkat."
-            sleep 10
-            sudo reboot
-        fi
-        # Set a timeout for ./pppwn
+        # Run pppwn in background
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin"
+        # Set a timeout for pppwn
         timeout_duration=180 # 3 minutes timeout
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for ./pppwn
         pppwn_pid=$!
-        # Loading bar based on output
-        while true; do
-            if grep -q '\[.*\]' <<< "$pppwn_output"; then
-                progress=$(grep -oP '\[.*\]' <<< "$pppwn_output" | tail -n 1)
-                echo -ne "Processing: $progress\r"
-            fi
-            if ! ps -p $pppwn_pid > /dev/null; then
-                break
-            fi
-            sleep 1
-        done
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo "
@@ -54,7 +36,7 @@ run_pppwn() {
 }
 
 # Main script
-# Loop until ./pppwn completes successfully
+# Loop until pppwn completes successfully
 while true; do
     # Check and reconnect enp0s3
     check_enp0s3
@@ -68,10 +50,11 @@ while true; do
              | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
       _ _ _ _| |  | | |___| |  | | |_| | |___ / ___ \ | |  |_____| |  _  | |___| |\  |_ _ _ _ 
      (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
+                                                                                                                                                                                                                                             
 "
-        # Run ./pppwn with retry
+        # Run pppwn with retry
         run_pppwn
-        # If ./pppwn fails, it will restart the device
+        # If pppwn fails, it will restart the device
         # So, no need to execute any further commands here
     else
         echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
