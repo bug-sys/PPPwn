@@ -5,7 +5,7 @@ INSTALL :
 git clone --recursive https://github.com/SUIJUNG/PPPwn
 ```
 ```sh
-sudo bash /root/PPPwn/install
+sudo bash /root/PPPwn/install.sh
 ```
 Credit : 
 - TheOfficialFloW
