@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# Function to check and reconnect enp0s3
-check_enp0s3() {
-    if ! ip link show enp0s3 | grep -q "state UP"; then
-        sudo ifup enp0s3
+# Function to check and reconnect end0
+check_end0() {
+    if ! ip link show end0 | grep -q "state UP"; then
+        sudo ifup end0
     fi
 }
 
-# Function to run pppwn.py with retry
+# Function to run ./pppwn with retry
 run_pppwn() {
     while true; do
-        # Run pppwn.py in background
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "stage1.bin" --stage2 "stage2.bin" &
-        # Set a timeout for pppwn.py
+        # Run ./pppwn in background
+        ./pppwn --interface end0 --fw 1100 --stage1 "stage1.bin" --stage2 "stage2.bin" &
+        # Set a timeout for ./pppwn
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for ./pppwn
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo "
@@ -36,13 +36,13 @@ run_pppwn() {
 }
 
 # Main script
-# Loop until pppwn.py completes successfully
+# Loop until ./pppwn completes successfully
 while true; do
-    # Check and reconnect enp0s3
-    check_enp0s3
+    # Check and reconnect end0
+    check_end0
     
-    # Check if enp0s3 is connected
-    if ip link show enp0s3 | grep -q "state UP"; then
+    # Check if end0 is connected
+    if ip link show end0 | grep -q "state UP"; then
         echo "[+]PS4 TERDETEKSI !!!"
         echo "
               __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
@@ -52,9 +52,9 @@ while true; do
      (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
                                                                                                                                                                                                                                              
 "
-        # Run pppwn.py with retry
+        # Run ./pppwn with retry
         run_pppwn
-        # If pppwn.py fails, it will restart the device
+        # If ./pppwn fails, it will restart the device
         # So, no need to execute any further commands here
     else
         echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
