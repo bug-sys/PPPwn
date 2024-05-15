@@ -7,35 +7,43 @@ check_enp0s3() {
     fi
 }
 
+# Function to update loading bar
+update_loading_bar() {
+    local progress="$1"
+    local total_length=50
+    local percentage=$((progress * total_length / 100))
+    local loading_bar=$(printf '#%.0s' $(seq 1 $percentage))
+    local spaces=$(printf ' %.0s' $(seq 1 $((total_length - percentage))))
+
+    echo -ne "[${loading_bar}${spaces}] ${progress}%\r"
+}
+
 # Function to run pppwn.py with retry
 run_pppwn() {
-    # Set a timeout for pppwn.py
-    timeout_duration=180 # 3 minutes timeout
-    progress=0
-    while [ $progress -lt $timeout_duration ]; do
-        # Run pppwn.py in background
-        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 &
+    while true; do
+        # Run pppwn.py in background and capture its output
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 | tee /dev/tty &
+        # Set a timeout for pppwn.py
+        timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
-        while kill -0 $pppwn_pid 2>/dev/null; do
-            # Update progress bar
-            printf "["
-            for ((i=0; i<$progress; i+=5)); do printf "#"; done
-            for ((i=$progress; i<$timeout_duration; i+=5)); do printf " "; done
-            printf "] $progress%%\r"
-            sleep 1
-            ((progress++))
-        done
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
-            echo "pppwn.py completed successfully."
-            return 0
+            echo "
+              _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
+             | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
+             | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
+      _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
+     (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
+"
+            sleep 10 
+            sudo shutdown now
         else
-            echo "pppwn.py failed to complete. Retrying..."
+            echo "[*]HEN GAGAL... MEMULAI ULANG PERANGKAT !!!"
             sleep 10
+            sudo reboot
         fi
     done
-    echo "pppwn.py failed to complete within the timeout."
-    return 1
 }
 
 # Main script
@@ -46,13 +54,21 @@ while true; do
     
     # Check if enp0s3 is connected
     if ip link show enp0s3 | grep -q "state UP"; then
-        echo "[+] PS4 TERDETEKSI !!!"
+        echo "[+]PS4 TERDETEKSI !!!"
+        echo "
+              __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
+             |  \/  | ____|  \/  | | | | |      / \  |_ _|         | | | | ____| \ | |        
+             | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
+      _ _ _ _| |  | | |___| |  | | |_| | |___ / ___ \ | |  |_____| |  _  | |___| |\  |_ _ _ _ 
+     (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
+                                                                                                                                                                                                                                             
+"
         # Run pppwn.py with retry
         run_pppwn
         # If pppwn.py fails, it will restart the device
         # So, no need to execute any further commands here
     else
-        echo "[-] TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
+        echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
         sleep 5
     fi
 done
