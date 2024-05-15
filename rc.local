@@ -11,7 +11,7 @@ check_enp0s3() {
 run_pppwn() {
     while true; do
         # Run pppwn.py in background
-        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 | pv -p --line-mode --size $(wc -l < /root/PPPwn/pppwn.py) > /dev/null &
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 &
         # Set a timeout for pppwn.py
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
@@ -25,9 +25,10 @@ run_pppwn() {
       _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
      (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
 "
+            sleep 10 
             sudo shutdown now
         else
-            echo "[*]HEN GAGAL. MEMULAI ULANG PERANGKAT..."
+            echo "[*]HEN GAGAL... MEMULAI ULANG PERANGKAT !!!"
             sleep 10
             sudo reboot
         fi
