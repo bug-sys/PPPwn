@@ -1,0 +1,1 @@
+goldhen.bin = to USB payload.bin
