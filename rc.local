@@ -10,8 +10,8 @@ check_enp0s3() {
 # Function to run pppwn with retry
 run_pppwn() {
     while true; do
-        # Run pppwn in background
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 3635 > /dev/null
+        # Run pppwn
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin"
         # Set a timeout for pppwn
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
