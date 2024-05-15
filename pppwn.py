@@ -5,6 +5,30 @@ from struct import pack,unpack
 from sys import exit
 from time import sleep
 from offsets import*
+import time
+
+def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filled_length = int(length * iteration // total)
+    bar = fill * filled_length + '-' * (length - filled_length)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end='\r')
+    if iteration == total:
+        print()
+
+def pppwn():
+    # Misalkan Anda memiliki loop atau proses yang perlu diindikasikan progress-nya
+    total_iterations = 100
+    for i in range(total_iterations):
+        # Lakukan sesuatu di sini, seperti menjalankan bagian dari skrip Anda
+        time.sleep(0.1)  # Contoh jeda untuk simulasi pekerjaan
+        # Update progress bar
+        progress_bar(i + 1, total_iterations, prefix='Progress:', suffix='Complete', length=50)
+    
+    # Setelah loop selesai, tampilkan pesan selesai atau lakukan tindakan lanjutan
+    print("Pekerjaan selesai.")
+
+if __name__ == "__main__":
+	
 PPPOE_TAG_HUNIQUE=259
 PPPOE_TAG_ACOOKIE=260
 PPPOE_CODE_PADI=9
