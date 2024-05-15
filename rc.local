@@ -10,12 +10,30 @@ check_end0() {
 # Function to run ./pppwn with retry
 run_pppwn() {
     while true; do
-        # Run ./pppwn in background
-        /root/PPPwn/./pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
+        # Run ./pppwn
+        ./pppwn_output=$(./root/PPPwn/./pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
+        # Check if ./pppwn failed or did not produce relevant output
+        if [ $? -ne 0 ] || ! echo "$./pppwn_output" | grep -q '\[.*?\]'; then
+            echo "[*] ./pppwn gagal atau tidak menghasilkan output yang relevan."
+            echo "[*] Memulai ulang perangkat."
+            sleep 10
+            sudo reboot
+        fi
         # Set a timeout for ./pppwn
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for ./pppwn
+        ( sleep "$timeout_duration"; kill -9 $pppwn_pid; ) & # Set a timeout for ./pppwn
+        # Loading bar based on output
+        while true; do
+            progress=$(echo "$./pppwn_output" | grep -oP '\[.*?\]' | tail -n 1)
+            if [ -n "$progress" ]; then
+                echo -ne "Processing: $progress\r"
+            fi
+            if ! ps -p $pppwn_pid > /dev/null; then
+                break
+            fi
+            sleep 1
+        done
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo "
