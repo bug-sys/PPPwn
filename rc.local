@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Function to check and reconnect end0
-check_end0() {
-    if ! ip link show end0 | grep -q "state UP"; then
-        sudo ifup end0
+# Function to check and reconnect enp0s3
+check_enp0s3() {
+    if ! ip link show enp0s3 | grep -q "state UP"; then
+        sudo ifup enp0s3
     fi
 }
 
@@ -11,7 +11,7 @@ check_end0() {
 run_pppwn() {
     while true; do
         # Run ./pppwn
-        ./pppwn_output=$(./root/PPPwn/./pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
+        ./pppwn_output=$(./root/PPPwn/./pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | tee /dev/tty)
         # Check if ./pppwn failed or did not produce relevant output
         if [ $? -ne 0 ] || ! echo "$./pppwn_output" | grep -q '\[.*?\]'; then
             echo "[*] ./pppwn gagal atau tidak menghasilkan output yang relevan."
@@ -56,11 +56,11 @@ run_pppwn() {
 # Main script
 # Loop until ./pppwn completes successfully
 while true; do
-    # Check and reconnect end0
-    check_end0
+    # Check and reconnect enp0s3
+    check_enp0s3
     
-    # Check if end0 is connected
-    if ip link show end0 | grep -q "state UP"; then
+    # Check if enp0s3 is connected
+    if ip link show enp0s3 | grep -q "state UP"; then
         echo "[+]PS4 TERDETEKSI !!!"
         echo "
               __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
