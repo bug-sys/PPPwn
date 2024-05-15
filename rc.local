@@ -7,22 +7,11 @@ check_enp0s3() {
     fi
 }
 
-# Function to update loading bar
-update_loading_bar() {
-    local progress="$1"
-    local total_length=50
-    local percentage=$((progress * total_length / 100))
-    local loading_bar=$(printf '#%.0s' $(seq 1 $percentage))
-    local spaces=$(printf ' %.0s' $(seq 1 $((total_length - percentage))))
-
-    echo -ne "[${loading_bar}${spaces}] ${progress}%\r"
-}
-
 # Function to run pppwn.py with retry
 run_pppwn() {
     while true; do
-        # Run pppwn.py in background and capture its output
-        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 | tee /dev/tty &
+        # Run pppwn.py in background
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 &
         # Set a timeout for pppwn.py
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
