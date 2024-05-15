@@ -11,7 +11,7 @@ check_end0() {
 run_pppwn() {
     while true; do
         # Run ./pppwn in background
-        ./pppwn --interface end0 --fw 1100 --stage1 "stage1.bin" --stage2 "stage2.bin" &
+        /root/PPPwn/./pppwn --interface end0 --fw 1100 --stage1 "stage1.bin" --stage2 "stage2.bin" &
         # Set a timeout for ./pppwn
         timeout_duration=180 # 3 minutes timeout
         pppwn_pid=$!
