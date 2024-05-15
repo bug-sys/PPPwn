@@ -18,7 +18,7 @@ run_pppwn() {
         { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
-            echo "\033[38;5;118m
+        echo -e "\033[38;5;118m
               _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
              | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
              | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
@@ -44,7 +44,7 @@ while true; do
     # Check if enp0s3 is connected
     if ip link show enp0s3 | grep -q "state UP"; then
         echo "[+]PS4 TERDETEKSI !!!"
-        echo "\033[38;5;226m
+        echo -e "\033[38;5;226m
               __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
              |  \/  | ____|  \/  | | | | |      / \  |_ _|         | | | | ____| \ | |        
              | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
