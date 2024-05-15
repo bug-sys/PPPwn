@@ -10,20 +10,28 @@ check_enp0s3() {
 # Function to run pppwn.py with retry
 run_pppwn() {
     while true; do
-        # Run pppwn.py and pipe its output to pv for progress bar
-        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 | pv -l -s 100 >/dev/null
+        # Redirect output of pppwn.py to a log file
+        sudo python3 /root/PPPwn/pppwn.py --interface=enp0s3 --fw=1100 >/tmp/pppwn.log 2>&1 &
+
+        # Read from log file and pipe it to pv for progress bar
+        tail -f /tmp/pppwn.log | pv -l -s "$(wc -c < /tmp/pppwn.log)" >/dev/null &
+        pv_pid=$!
+
         # Set a timeout for pppwn.py
         timeout_duration=180 # 3 minutes timeout
-        pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
-        wait $pppwn_pid
-        if [ $? -eq 0 ]; then
+        { sleep "$timeout_duration"; kill -9 $pv_pid; } &
+
+        # Wait for pppwn.py to finish
+        wait $pv_pid
+        pppwn_exit_code=$?
+
+        if [ $pppwn_exit_code -eq 0 ]; then
             echo "
               _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
              | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
              | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
       _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
-     (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
+     (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)
 "
             sleep 10 
             sudo shutdown now
@@ -50,7 +58,6 @@ while true; do
              | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
       _ _ _ _| |  | | |___| |  | | |_| | |___ / ___ \ | |  |_____| |  _  | |___| |\  |_ _ _ _ 
      (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
-                                                                                                                                                                                                                                             
 "
         # Run pppwn.py with retry
         run_pppwn
