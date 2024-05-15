@@ -1,6 +1,6 @@
 # PPPwn - HEN PS4 11.00
 
-!!!!  This exploit can only be run on LINUX DEBIAN  !!!!
+!!!!  This exploit can only be run on LINUX DEBIAN 11 and higher versions  !!!!
 
 INSTALL :
 ```sh
