@@ -1,5 +1,4 @@
 #!/bin/bash
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
 sudo apt update -y
 sudo apt-get install pv -y
 sudo apt install python3-scapy -y
