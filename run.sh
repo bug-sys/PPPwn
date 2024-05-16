@@ -12,22 +12,24 @@ run_pppwn() {
     while true; do
         # Menjalankan pppwn di latar belakang
         sudo /root/PPPwn/pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
-        # Menetapkan batas waktu untuk pppwn
-        timeout_duration=90
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Menetapkan batas waktu untuk pppwn
-        wait $pppwn_pid
-        if [ $? -eq 0 ]; then
+        # Menunggu perintah pppwn selesai dengan batasan waktu
+        if wait $pppwn_pid; then
             pppwn_success_message
+            # Menunggu sebentar sebelum melakukan Shutdown otomatis
             sleep 8 
+            # Shutdown otomatis
             sudo shutdown now
         else
             pppwn_failure_message
+            # Menunggu sebentar sebelum melakukan restart otomatis
             sleep 8
+            # Restart otomatis
             sudo reboot
         fi
     done
 }
+
 
 # Fungsi untuk menampilkan pesan kegagalan koneksi jaringan
 network_connection_failure_message() {
