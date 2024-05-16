@@ -20,7 +20,8 @@ run_pppwn() {
         wait $pppwn_pid
         # Periksa apakah pppwn masih berjalan
         if ps -p $pppwn_pid > /dev/null; then
-            echo "[*]PPPwn terjebak, memulai ulang perangkat !!!"
+            echo -ne "\033[91m[*]HEN MACET ,, TOLONG PERIKSA PS4 ANDA... MEMULAI ULANG STB !!!\033[0m"
+            sleep 8
             sudo reboot
         else
             # Periksa apakah pppwn keluar dengan sukses
@@ -37,7 +38,7 @@ run_pppwn() {
             else
                 # Menghentikan loading bar
                 echo -ne '\033[?25l' # Sembunyikan kursor
-                echo "[*]HEN GAGAL... Memulai ulang perangkat !!!"
+                echo -ne "\033[91m[*]HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
                 sleep 8
                 sudo reboot
             fi
@@ -64,10 +65,10 @@ while true; do
 \033[0m"
         # Menjalankan pppwn dengan percobaan ulang
         run_pppwn
-        # Jika pppwn gagal, perangkat akan di-restart
+        # Jika pppwn gagal, STB akan di-restart
         # Jadi, tidak perlu mengeksekusi perintah lebih lanjut di sini
     else
-        echo "[-]TIDAK TERHUBUNG, MEMERIKSA KONEKSI LAN PS4 ANDA DENGAN STB, MENCOBA LAGI DALAM 5 DETIK !!!"
+        echo -ne "\033[91m[-]TIDAK TERHUBUNG... PASTIKAN KONEKSI LAN PS4 ANDA TERHUBUNG DENGAN STB... MENCOBA LAGI DALAM 5 DETIK !!!\033[0m"
         sleep 5
     fi
 done
