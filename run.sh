@@ -3,7 +3,6 @@
 # Function to check and reconnect end0
 check_end0() {
     if ! ip link show end0 | grep -q "state UP"; then
-        echo "Connection lost! Reconnecting..."
         sudo ifup end0
     fi
 }
@@ -16,7 +15,7 @@ run_pppwn() {
         # Set a timeout for pppwn.py
         timeout_duration=90
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn.py
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } &> /dev/null
         wait $pppwn_pid
         if [ $? -eq 0 ]; then
             echo -e "\033[38;5;118m
