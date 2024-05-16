@@ -26,10 +26,10 @@ run_pppwn() {
  (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
    \033[0m"
             sleep 8
-			sudo shutdown now
+	    sudo shutdown now
         else
             echo -ne "\033[91m[*] HEN GAGAL... MEMULAI ULANG STB DALAM 8 DETIK !!!\033[0m"
-			sleep 8
+	    sleep 8
             sudo reboot
         fi
     done
