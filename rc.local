@@ -18,30 +18,25 @@ run_pppwn() {
         timeout_duration=120
         { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set timeout untuk pppwn
         wait $pppwn_pid
-        # Periksa apakah pppwn masih berjalan
-        if ps -p $pppwn_pid > /dev/null; then
-            echo -ne "\033[91m[*]HEN MACET... TOLONG PERIKSA PS4 ANDA... MEMULAI ULANG STB !!!\033[0m"
-            sleep 8
-            sudo reboot
-        else
-            # Periksa apakah pppwn keluar dengan sukses
-            if [ $? -eq 0 ]; then
-                echo -e "\033[38;5;118m
+        # Mendapatkan kode keluar dari pppwn
+        pppwn_exit_code=$?
+        # Periksa kode keluar pppwn
+        if [ $pppwn_exit_code -eq 0 ]; then
+            echo -e "\033[38;5;118m
                   _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
                  | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
                  | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
           _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
          (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
     \033[0m"
-                sleep 8 
-                sudo shutdown now
-            else
-                # Menghentikan loading bar
-                echo -ne '\033[?25l' # Sembunyikan kursor
-                echo -ne "\033[91m[*]HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
-                sleep 8
-                sudo reboot
-            fi
+            sleep 8 
+            sudo shutdown now
+        else
+            # Menghentikan loading bar
+            echo -ne '\033[?25l' # Sembunyikan kursor
+            echo -ne "\033[91m[*]HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
+            sleep 8
+            sudo reboot
         fi
     done
 }
