@@ -10,13 +10,16 @@ check_enp0s3() {
 # Fungsi untuk menjalankan pppwn dengan percobaan ulang
 run_pppwn() {
     while true; do
-        # Menjalankan pppwn
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null &
+        # Menjalankan pppwn tanpa output ke terminal
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | pv -lp -s 83 > /dev/null &
         pppwn_pid=$!
 
         # Set a timeout for pppwn
-        timeout_duration=60 # 1 menit timeout
-        (sleep "$timeout_duration"; kill -9 $pppwn_pid) & # Set timeout for pppwn
+        timeout_duration=90 # 1 menit timeout
+        (sleep "$timeout_duration"; kill -9 $pppwn_pid) > /dev/null 2>&1 & # Set timeout for pppwn
+        timeout_pid=$!
+
+        # Menunggu selesainya pppwn atau timeout
         wait $pppwn_pid
 
         if [ $? -eq 0 ]; then
