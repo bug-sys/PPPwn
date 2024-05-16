@@ -17,9 +17,9 @@ run_pppwn() {
         # Membuat timestamp awal
         start_time=$(date +%s)
 
-        # Mengecek apakah ada aktivitas setiap 10 detik
+        # Mengecek apakah ada aktivitas setiap 5 detik
         while true; do
-            sleep 10
+            sleep 5
             current_time=$(date +%s)
             # Menghitung selisih waktu
             elapsed_time=$((current_time - start_time))
@@ -31,8 +31,8 @@ run_pppwn() {
                 # Jika proses tidak berjalan, keluar dari loop
                 break
             fi
-            # Jika tidak ada aktivitas baru dalam 60 detik, restart perangkat
-            if [ $elapsed_time -ge 60 ]; then
+            # Jika tidak ada aktivitas baru dalam 10 detik, restart perangkat
+            if [ $elapsed_time -ge 10 ]; then
                 sudo reboot
             fi
         done
