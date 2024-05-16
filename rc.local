@@ -11,13 +11,16 @@ check_enp0s3() {
 run_pppwn() {
     while true; do
         # Menjalankan pppwn
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null
-        # Set a timeout for pppwn
-        timeout_duration=60 # 1 minutes timeout
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null &
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn
+
+        # Set a timeout for pppwn
+        timeout_duration=60 # 1 menit timeout
+        (sleep "$timeout_duration"; kill -9 $pppwn_pid) & # Set timeout for pppwn
         wait $pppwn_pid
+
         if [ $? -eq 0 ]; then
+            # Jika berhasil
             echo -e "\033[38;5;118m
                   _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
                  | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
@@ -28,9 +31,10 @@ run_pppwn() {
             sleep 8 
             sudo shutdown now
         else
+            # Jika gagal
             # Menghentikan loading bar
             echo -ne '\033[?25l' # Sembunyikan kursor
-            echo -ne "\033[91m[*]HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
+            echo -ne "\033[91m[*] HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
             sleep 8
             sudo reboot
         fi
