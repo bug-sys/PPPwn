@@ -4,6 +4,9 @@
 
 INSTALL :
 ```sh
+git clone --recursive https://github.com/bug-sys/PPPwn
+```
+```sh
 sudo bash /root/PPPwn/install.sh
 ```
 
