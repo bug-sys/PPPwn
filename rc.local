@@ -14,10 +14,14 @@ run_pppwn() {
         sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null & 
         # Mendapatkan ID proses pppwn
         pppwn_pid=$!
-        # Set timeout untuk pppwn (2 menit)
-        timeout_duration=120
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set timeout untuk pppwn
         wait $pppwn_pid
+        # Periksa apakah pppwn masih berjalan dan restart perangkat jika macet
+        if ps -p $pppwn_pid > /dev/null; then
+            echo -ne '\033[?25l' # Sembunyikan kursor
+            echo -ne "\033[91m[*]HEN MACET... TOLONG PERIKSA PS4 ANDA... MEMULAI ULANG STB !!!\033[0m"
+            sleep 8
+            sudo reboot
+        fi
         # Mendapatkan kode keluar dari pppwn
         pppwn_exit_code=$?
         # Periksa kode keluar pppwn
