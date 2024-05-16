@@ -7,16 +7,6 @@ check_end0() {
     fi
 }
 
-# Fungsi untuk mencoba restart koneksi ethernet sampai terhubung
-restart_ethernet_connection() {
-    while ! ip link show end0 | grep -q "state UP"; do
-        network_connection_failure_message
-        sudo ifdown end0
-        sudo ifup end0
-        sleep 5
-    done
-}
-
 # Fungsi untuk menjalankan pppwn dengan percobaan ulang
 run_pppwn() {
     while true; do
