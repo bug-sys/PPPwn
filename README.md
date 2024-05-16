@@ -1,4 +1,4 @@
-# PPPwn - HEN PS4 11.00
+# PPPwn - HEN PS4 11.00 ARM
 
 !!!!  This exploit can only be run on LINUX DEBIAN 11 and higher versions  !!!!
 
