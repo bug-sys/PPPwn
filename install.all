@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update -y
+sudo apt update
 sudo apt install python3-scapy -y
 sudo chmod +x /root/PPPwn/pppwn
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
