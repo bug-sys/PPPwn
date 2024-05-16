@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Function to check and reconnect end0
-check_end0() {
-    if ! ip link show end0 | grep -q "state UP"; then
-        sudo ifup end0
+# Function to check and reconnect eth0
+check_eth0() {
+    if ! ip link show eth0 | grep -q "state UP"; then
+        sudo ifup eth0
     fi
 }
 
@@ -11,7 +11,7 @@ check_end0() {
 run_pppwn() {
     while true; do
         # Run pppwn.py in background
-        sudo /root/PPPwn/pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
+        sudo /root/PPPwn/pppwn --interface eth0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
         # Set a timeout for pppwn.py
         timeout_duration=60
         pppwn_pid=$!
@@ -38,11 +38,11 @@ run_pppwn() {
 # Main script
 # Loop until pppwn.py completes successfully
 while true; do
-    # Check and reconnect end0
-    check_end0
+    # Check and reconnect eth0
+    check_eth0
     
-    # Check if end0 is connected
-    if ip link show end0 | grep -q "state UP"; then
+    # Check if eth0 is connected
+    if ip link show eth0 | grep -q "state UP"; then
         echo -e "\033[1;34m[+] PS4 TERDETEKSI !!!\033[0m"
         echo -e "\033[38;5;226m
               __  __ _____ __  __ _   _ _        _    ___           _   _ _____ _   _         
