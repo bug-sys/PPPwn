@@ -13,10 +13,10 @@ run_pppwn() {
         # Run pppwn.py in background
         sudo /root/PPPwn/pppwn --interface end0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
         # Set a timeout for pppwn.py
-        timeout_duration=90
+        timeout_duration=10
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } &> /dev/null
-        wait $pppwn_pid
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } > /dev/null 2>&1 &
+        wait $pppwn_pid > /dev/null 2>&1
         if [ $? -eq 0 ]; then
             echo -e "\033[38;5;118m
           _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
