@@ -75,9 +75,6 @@ main_pppwn() {
             # Menampilkan pesan PS4 terdeteksi
             display_ps4_detected_message
             
-            # Mencoba restart koneksi Ethernet sampai terhubung
-            restart_ethernet_connection
-            
             # Jalankan pppwn dengan percobaan ulang
             run_pppwn
             # Jika pppwn gagal, perangkat akan dimulai ulang
