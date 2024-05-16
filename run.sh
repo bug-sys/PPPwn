@@ -38,7 +38,7 @@ network_connection_failure_message() {
 
 # Fungsi untuk menampilkan pesan kegagalan pppwn
 pppwn_failure_message() {
-    echo -ne "\033[91m[*] HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
+    echo -ne "\033[91m[*] HEN GAGAL... MEMULAI ULANG STB DALAM 8 DETIK !!!\033[0m"
 }
 
 # Fungsi untuk menampilkan pesan kesuksesan pppwn
@@ -49,7 +49,7 @@ pppwn_success_message() {
          | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
   _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
  (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
-\033[0m"
+   \033[0m"
 }
 
 # Fungsi untuk menampilkan pesan PS4 terdeteksi
@@ -60,9 +60,8 @@ display_ps4_detected_message() {
              |  \/  | ____|  \/  | | | | |      / \  |_ _|         | | | | ____| \ | |        
              | |\/| |  _| | |\/| | | | | |     / _ \  | |   _____  | |_| |  _| |  \| |        
       _ _ _ _| |  | | |___| |  | | |_| | |___ / ___ \ | |  |_____| |  _  | |___| |\  |_ _ _ _ 
-     (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
-                                                                                                                                                                                                                                             
-    \033[0m"
+     (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)                                                                                                                                                                                                                                            
+     \033[0m"
 }
 
 # Fungsi utama untuk memeriksa dan menjalankan skrip
