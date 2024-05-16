@@ -7,6 +7,16 @@ check_end0() {
     fi
 }
 
+# Fungsi untuk mencoba restart koneksi ethernet sampai terhubung
+restart_ethernet_connection() {
+    while ! ip link show end0 | grep -q "state UP"; do
+        network_connection_failure_message
+        sudo ifdown end0
+        sudo ifup end0
+        sleep 5
+    done
+}
+
 # Fungsi untuk menjalankan pppwn dengan percobaan ulang
 run_pppwn() {
     while true; do
@@ -73,6 +83,9 @@ main_pppwn() {
         if ip link show end0 | grep -q "state UP"; then
             # Menampilkan pesan PS4 terdeteksi
             display_ps4_detected_message
+            
+            # Mencoba restart koneksi Ethernet sampai terhubung
+            restart_ethernet_connection
             
             # Jalankan pppwn dengan percobaan ulang
             run_pppwn
