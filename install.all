@@ -6,7 +6,7 @@ sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
 sudo sed -i 's^sudo bash /root/PPPwn/run.sh \&^^g' /etc/rc.local
 sudo sed -i 's^exit 0^sudo bash /root/PPPwn/run.sh \&\n\nexit 0^g' /etc/rc.local
 echo "*******************************************"
-echo -e '\033[36mPenginstalan selesai,\033[33m Mematikan STB ...\033[0m'
+echo -e '\033[36mPenginstalan selesai,\033[33m Mematikan STB...\033[0m'
 echo "*******************************************"
 sleep 5
 shutdown now
