@@ -1,47 +1,57 @@
 #!/bin/bash
 
-# Function to check and reconnect enp0s3
+# Fungsi untuk memeriksa dan menyambungkan kembali enp0s3
 check_enp0s3() {
     if ! ip link show enp0s3 | grep -q "state UP"; then
         sudo ifup enp0s3
     fi
 }
 
-# Function to run pppwn with retry
+# Fungsi untuk menjalankan pppwn dengan percobaan ulang
 run_pppwn() {
     while true; do
-        # Run pppwn
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null 
-        # Set a timeout for pppwn
-        timeout_duration=180 # 3 minutes timeout
+        # Menjalankan pppwn
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" | pv -lp -s 83 > /dev/null & 
+        # Mendapatkan ID proses pppwn
         pppwn_pid=$!
-        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set a timeout for pppwn
+        # Set timeout untuk pppwn (2 menit)
+        timeout_duration=120
+        { sleep "$timeout_duration"; kill -9 $pppwn_pid; } & # Set timeout untuk pppwn
         wait $pppwn_pid
-        if [ $? -eq 0 ]; then
-        echo -e "\033[38;5;118m
-              _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
-             | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
-             | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
-      _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
-     (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
-\033[0m"
-            sleep 10 
-            sudo shutdown now
-        else
-            echo "[*]HEN GAGAL... MEMULAI ULANG PERANGKAT !!!"
-            sleep 10
+        # Periksa apakah pppwn masih berjalan
+        if ps -p $pppwn_pid > /dev/null; then
+            echo "[*]PPPwn terjebak, memulai ulang perangkat !!!"
             sudo reboot
+        else
+            # Periksa apakah pppwn keluar dengan sukses
+            if [ $? -eq 0 ]; then
+                echo -e "\033[38;5;118m
+                  _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
+                 | | | | ____| \ | |         | __ )| ____|  _ \| | | |  / \  / ___|_ _| |            
+                 | |_| |  _| |  \| |  _____  |  _ \|  _| | |_) | |_| | / _ \ \___ \| || |            
+          _ _ _ _|  _  | |___| |\  | |_____| | |_) | |___|  _ <|  _  |/ ___ \ ___) | || |___ _ _ _ _ 
+         (_|_|_|_)_| |_|_____|_| \_|         |____/|_____|_| \_\_| |_/_/   \_\____/___|_____(_|_|_|_)                                                                                                                                                                                
+    \033[0m"
+                sleep 8 
+                sudo shutdown now
+            else
+                # Menghentikan loading bar
+                echo -ne '\033[?25l' # Sembunyikan kursor
+                echo "[*]HEN GAGAL... Memulai ulang perangkat !!!"
+                sleep 8
+                sudo reboot
+            fi
         fi
     done
 }
 
-# Main script
-# Loop until pppwn completes successfully
+# Skrip utama
+# Melakukan loop sampai pppwn berhasil
 while true; do
-    # Check and reconnect enp0s3
+    # Periksa dan menyambungkan enp0s3
     check_enp0s3
     
-    # Check if enp0s3 is connected
+    # Periksa apakah enp0s3 terhubung
     if ip link show enp0s3 | grep -q "state UP"; then
         echo "[+]PS4 TERDETEKSI !!!"
         echo -e "\033[38;5;226m
@@ -52,12 +62,12 @@ while true; do
      (_|_|_|_)_|  |_|_____|_|  |_|\___/|_____/_/   \_\___|         |_| |_|_____|_| \_(_|_|_|_)
                                                                                                                                                                                                                                              
 \033[0m"
-        # Run pppwn with retry
+        # Menjalankan pppwn dengan percobaan ulang
         run_pppwn
-        # If pppwn fails, it will restart the device
-        # So, no need to execute any further commands here
+        # Jika pppwn gagal, perangkat akan di-restart
+        # Jadi, tidak perlu mengeksekusi perintah lebih lanjut di sini
     else
-        echo "[-]TIDAK TERHUBUNG, PERIKSA SAMBUNGAN LAN PS4 ANDA DENGAN STB, MENGULANG DALAM 5 DETIK !!!"
+        echo "[-]TIDAK TERHUBUNG, MEMERIKSA KONEKSI LAN PS4 ANDA DENGAN STB, MENCOBA LAGI DALAM 5 DETIK !!!"
         sleep 5
     fi
 done
