@@ -11,18 +11,36 @@ check_enp0s3() {
 run_pppwn() {
     while true; do
         # Menjalankan pppwn tanpa output ke terminal
-        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" 2>&1 | pv -lp -s 83 > /dev/null &
+        sudo /root/PPPwn/pppwn --interface enp0s3 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" > /dev/null 2>&1 &
         pppwn_pid=$!
 
-        # Set a timeout for pppwn
-        timeout_duration=90 # 1 menit timeout
-        (sleep "$timeout_duration"; kill -9 $pppwn_pid) > /dev/null 2>&1 & # Set timeout for pppwn
-        timeout_pid=$!
+        # Membuat timestamp awal
+        start_time=$(date +%s)
 
-        # Menunggu selesainya pppwn atau timeout
-        wait $pppwn_pid
+        # Mengecek apakah ada aktivitas setiap 10 detik
+        while true; do
+            sleep 10
+            current_time=$(date +%s)
+            # Menghitung selisih waktu
+            elapsed_time=$((current_time - start_time))
+            # Mengecek apakah proses pppwn masih berjalan
+            if ps -p $pppwn_pid > /dev/null; then
+                # Jika proses masih berjalan, update timestamp awal
+                start_time=$current_time
+            else
+                # Jika proses tidak berjalan, keluar dari loop
+                break
+            fi
+            # Jika tidak ada aktivitas baru dalam 60 detik, restart perangkat
+            if [ $elapsed_time -ge 60 ]; then
+                sudo reboot
+            fi
+        done
 
-        if [ $? -eq 0 ]; then
+        # Mendapatkan status keluaran pppwn
+        pppwn_status=$?
+
+        if [ $pppwn_status -eq 0 ]; then
             # Jika berhasil
             echo -e "\033[38;5;118m
                   _   _ _____ _   _           ____  _____ ____  _   _    _    ____ ___ _             
@@ -35,8 +53,6 @@ run_pppwn() {
             sudo shutdown now
         else
             # Jika gagal
-            # Menghentikan loading bar
-            echo -ne '\033[?25l' # Sembunyikan kursor
             echo -ne "\033[91m[*] HEN GAGAL... MEMULAI ULANG STB !!!\033[0m"
             sleep 8
             sudo reboot
