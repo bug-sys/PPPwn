@@ -20,7 +20,7 @@ run_pppwn() {
         wait $pppwn_pid
         # Periksa apakah pppwn masih berjalan
         if ps -p $pppwn_pid > /dev/null; then
-            echo -ne "\033[91m[*]HEN MACET ,, TOLONG PERIKSA PS4 ANDA... MEMULAI ULANG STB !!!\033[0m"
+            echo -ne "\033[91m[*]HEN MACET... TOLONG PERIKSA PS4 ANDA... MEMULAI ULANG STB !!!\033[0m"
             sleep 8
             sudo reboot
         else
