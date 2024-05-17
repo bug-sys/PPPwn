@@ -28,7 +28,7 @@ run_pppwn() {
             sleep 6
 	    sudo shutdown now
         else
-            echo -ne "\033[91m[X][X][X][X][X][X][X][X][X][X] HEN GAGAL... MEMULAI ULANG STB !!! [X][X][X][X][X][X][X][X][X][X]\033[0m"
+            echo -ne "\033[91m[X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X] HEN GAGAL... MEMULAI ULANG STB !!! [X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X][X]\033[0m"
 	    sleep 6
             sudo reboot
         fi
