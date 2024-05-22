@@ -11,7 +11,7 @@ check_eth0() {
 run_pppwn() {
     while true; do
         # Run pppwn.py in background
-        sudo /root/PPPwn/pppwn --interface eth0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
+        sudo /root/PPPwn/amlS805/pppwn --interface eth0 --fw 1100 --stage1 "/root/PPPwn/stage1.bin" --stage2 "/root/PPPwn/stage2.bin" &
         # Set a timeout for pppwn.py
         timeout_duration=90
         pppwn_pid=$!
