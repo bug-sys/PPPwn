@@ -1,6 +1,7 @@
 #!/bin/bash
 sudo apt update
 sudo apt install python3-scapy -y
+sudo apt install tcpdump
 sudo chmod +x /root/PPPwn/amlS805/pppwn
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
 sudo sed -i 's^sudo bash /root/PPPwn/amlS805/run.sh \&^^g' /etc/rc.local
