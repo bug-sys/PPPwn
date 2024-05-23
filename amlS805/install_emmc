@@ -57,7 +57,6 @@ sed -e "s/ROOTFS/ROOT_EMMC/g" \
  -i "$DIR_INSTALL/uEnv.txt"
 echo "selesai."
 
-rm $DIR_INSTALL/s9*
 rm $DIR_INSTALL/aml*
 
 umount $DIR_INSTALL
