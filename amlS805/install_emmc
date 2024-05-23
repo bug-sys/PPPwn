@@ -1,0 +1,143 @@
+#!/bin/sh
+
+# Mulai skrip untuk membuat MBR dan sistem berkas
+
+DEV_EMMC=/dev/mmcblk1
+UBOOT_IMG=/root/PPPwn/amlS805/u-boot-default.img
+
+# Format secara menyeluruh
+echo "Mulai format secara menyeluruh"
+mkfs.ext4 "${DEV_EMMC}"
+
+# Mulai membuat MBR dan partisi
+echo "Mulai membuat MBR dan partisi"
+parted -s "${DEV_EMMC}" mklabel msdos
+parted -s "${DEV_EMMC}" mkpart primary fat32 700M 828M
+parted -s "${DEV_EMMC}" mkpart primary ext4 829M 100%
+
+# Restore u-boot dari file yang sudah ada
+echo "Mulai memulihkan u-boot dari file"
+dd if="$UBOOT_IMG" of="${DEV_EMMC}" conv=fsync bs=1 count=442
+dd if="$UBOOT_IMG" of="${DEV_EMMC}" conv=fsync bs=512 skip=1 seek=1
+
+sync
+
+echo "Selesai"
+
+echo "Mulai menyalin sistem ke eMMC."
+
+mkdir -p /ddbr
+chmod 777 /ddbr
+
+PART_BOOT="${DEV_EMMC}p1"
+PART_ROOT="${DEV_EMMC}p2"
+DIR_INSTALL="/ddbr/install"
+
+if [ -d $DIR_INSTALL ] ; then
+    rm -rf $DIR_INSTALL
+fi
+mkdir -p $DIR_INSTALL
+
+if grep -q $PART_BOOT /proc/mounts ; then
+    echo "Melepaskan partisi BOOT."
+    umount -f $PART_BOOT
+fi
+echo -n "Membentuk partisi BOOT..."
+mkfs.vfat -n "BOOT_EMMC" $PART_BOOT
+echo "selesai."
+
+mount -o rw $PART_BOOT $DIR_INSTALL
+
+echo -n "Menyalin BOOT..."
+cp -r /boot/* $DIR_INSTALL && sync
+echo "selesai."
+
+echo -n "Mengedit konfigurasi init..."
+sed -e "s/ROOTFS/ROOT_EMMC/g" \
+ -i "$DIR_INSTALL/uEnv.txt"
+echo "selesai."
+
+rm $DIR_INSTALL/s9*
+rm $DIR_INSTALL/aml*
+
+umount $DIR_INSTALL
+
+if grep -q $PART_ROOT /proc/mounts ; then
+    echo "Melepaskan partisi ROOT."
+    umount -f $PART_ROOT
+fi
+
+echo "Membentuk partisi ROOT..."
+mke2fs -F -q -t ext4 -L ROOT_EMMC -m 0 $PART_ROOT
+e2fsck -n $PART_ROOT
+echo "selesai."
+
+echo "Menyalin ROOTFS."
+
+mount -o rw $PART_ROOT $DIR_INSTALL
+
+cd /
+echo "Menyalin BIN"
+tar -cf - bin | (cd $DIR_INSTALL; tar -xpf -)
+#echo "Menyalin BOOT"
+#mkdir -p $DIR_INSTALL/boot
+#tar -cf - boot | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat DEV"
+mkdir -p $DIR_INSTALL/dev
+#tar -cf - dev | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin ETC"
+tar -cf - etc | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin HOME"
+tar -cf - home | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin LIB"
+tar -cf - lib | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin LIB64"
+tar -cf - lib64 | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat MEDIA"
+mkdir -p $DIR_INSTALL/media
+#tar -cf - media | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat MNT"
+mkdir -p $DIR_INSTALL/mnt
+#tar -cf - mnt | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin OPT"
+tar -cf - opt | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat PROC"
+mkdir -p $DIR_INSTALL/proc
+echo "Menyalin ROOT"
+tar -cf - root | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat RUN"
+mkdir -p $DIR_INSTALL/run
+echo "Menyalin SBIN"
+tar -cf - sbin | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin SELINUX"
+tar -cf - selinux | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin SRV"
+tar -cf - srv | (cd $DIR_INSTALL; tar -xpf -)
+echo "Membuat SYS"
+mkdir -p $DIR_INSTALL/sys
+echo "Membuat TMP"
+mkdir -p $DIR_INSTALL/tmp
+echo "Menyalin USR"
+tar -cf - usr | (cd $DIR_INSTALL; tar -xpf -)
+echo "Menyalin VAR"
+tar -cf - var | (cd $DIR_INSTALL; tar -xpf -)
+sync
+
+echo "Menyalin fstab"
+
+rm $DIR_INSTALL/etc/fstab
+cp -a /root/fstab $DIR_INSTALL/etc/fstab
+
+rm $DIR_INSTALL/root/fstab
+rm $DIR_INSTALL/usr/bin/ddbr
+
+cd /
+sync
+
+umount $DIR_INSTALL
+
+echo "*******************************************"
+echo -e '\033[36mInstalasi selesai,\033[33m Merestart\033[0m'
+echo "*******************************************"
+sleep 5
+reboot
