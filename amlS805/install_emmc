@@ -116,14 +116,6 @@ echo "Menyalin VAR"
 tar -cf - var | (cd $DIR_INSTALL; tar -xpf -)
 sync
 
-echo "Menyalin fstab"
-
-rm $DIR_INSTALL/etc/fstab
-cp -a /etc/fstab $DIR_INSTALL/etc/fstab
-
-rm $DIR_INSTALL/etc/fstab
-rm $DIR_INSTALL/usr/bin/ddbr
-
 cd /
 sync
 
