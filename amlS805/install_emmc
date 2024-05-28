@@ -3,7 +3,7 @@
 # Mulai skrip untuk membuat MBR dan sistem berkas
 
 DEV_EMMC=/dev/mmcblk1
-UBOOT_IMG=/root/PPPwn/amlS805/u-boot-default.img
+UBOOT_IMG=/boot/bootloader.img
 
 # Format secara menyeluruh
 echo "Mulai format secara menyeluruh"
@@ -17,8 +17,7 @@ parted -s "${DEV_EMMC}" mkpart primary ext4 829M 100%
 
 # Restore u-boot dari file yang sudah ada
 echo "Mulai memulihkan u-boot dari file"
-dd if="$UBOOT_IMG" of="${DEV_EMMC}" conv=fsync bs=1 count=442
-dd if="$UBOOT_IMG" of="${DEV_EMMC}" conv=fsync bs=512 skip=1 seek=1
+dd if="$UBOOT_IMG" of="${DEV_EMMC}" conv=fsync
 
 sync
 
@@ -43,7 +42,7 @@ if grep -q $PART_BOOT /proc/mounts ; then
     umount -f $PART_BOOT
 fi
 echo -n "Membentuk partisi BOOT..."
-mkfs.vfat -n "BOOT_EMMC" $PART_BOOT
+mkfs.vfat -n "ROOTFS" $PART_BOOT
 echo "selesai."
 
 mount -o rw $PART_BOOT $DIR_INSTALL
@@ -52,12 +51,7 @@ echo -n "Menyalin BOOT..."
 cp -r /boot/* $DIR_INSTALL && sync
 echo "selesai."
 
-echo -n "Mengedit konfigurasi init..."
-sed -e "s/ROOTFS/ROOT_EMMC/g" \
- -i "$DIR_INSTALL/uEnv.txt"
-echo "selesai."
-
-rm $DIR_INSTALL/aml*
+echo "Selesai menyalin BOOT."
 
 umount $DIR_INSTALL
 
