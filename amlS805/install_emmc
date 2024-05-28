@@ -119,9 +119,9 @@ sync
 echo "Menyalin fstab"
 
 rm $DIR_INSTALL/etc/fstab
-cp -a /root/PPPwn/amlS805/fstab $DIR_INSTALL/etc/fstab
+cp -a /etc/fstab $DIR_INSTALL/etc/fstab
 
-rm $DIR_INSTALL/root/PPPwn/amlS805/fstab
+rm $DIR_INSTALL/etc/fstab
 rm $DIR_INSTALL/usr/bin/ddbr
 
 cd /
