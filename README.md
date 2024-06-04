@@ -1,6 +1,6 @@
 # PPPwn - HEN PS4 11.00 ARM
 
-!!!!  This exploit can only be run on LINUX DEBIAN 12  !!!!
+!!!!  This exploit can only be run on LINUX DEBIAN 12 & UBUNTU 22.04 !!!!
 
 INSTALL :
 ```sh
