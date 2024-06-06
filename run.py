@@ -20,10 +20,17 @@ def jalankan_pppwn():
         print_yellow("Menjalankan PPPwn...")
         result = subprocess.run([
             "sudo", "/root/PPPwn/pppwn",
-            "--interface", "eth0",
+            "-i", "eth0",
             "--fw", "1100",
-            "--stage1", "/root/PPPwn/stage1.bin",
-            "--stage2", "/root/PPPwn/stage2.bin"
+            "-s1", "/root/PPPwn/stage1.bin",
+            "-s2", "/root/PPPwn/stage2.bin",
+            "-t", "10",
+            "-a",
+            "-wap", "1",
+            "-gd", "8",
+            "-bs", "20480",
+            "-nw",
+            "-rs"
         ])
         if result.returncode == 0:
             print_yellow("PPPwn berhasil dilakukan.")
