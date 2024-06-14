@@ -1,7 +1,7 @@
-import subprocess
-import time
 import threading
 import configparser
+import subprocess
+import time
 
 class PPPwn:
     def __init__(self, config_file):
@@ -18,26 +18,31 @@ class PPPwn:
 
     def run_hen(self):
         command = [
-            "sudo", self.arguments['pppwn_path'],
-            "-i", self.arguments['interface'],
-            "--fw", self.arguments['fw'],
-            "--stage1", self.arguments['stage1'],
-            "--stage2", self.arguments['stage2'],
-            "--timeout", self.arguments['timeout'],
-            "--wait-after-pin", self.arguments['wait_after_pin'],
-            "--groom-delay", self.arguments['groom_delay'],
-            "--buffer-size", self.arguments['buffer_size'],
+            "sudo", self.arguments.get('pppwn_path'),
+            "-i", self.arguments.get('interface'),
+            "--fw", self.arguments.get('fw'),
+            "--stage1", self.arguments.get('stage1'),
+            "--stage2", self.arguments.get('stage2'),
+            "--timeout", self.arguments.get('timeout'),
+            "--wait-after-pin", self.arguments.get('wait_after_pin'),
+            "--groom-delay", self.arguments.get('groom_delay'),
+            "--buffer-size", self.arguments.get('buffer_size'),
             "-a",
         ]
-        subprocess.run(command)
+        process = subprocess.run(command)
+        if process.returncode == 0:
+            subprocess.run(["sudo", "shutdown", "-h", "now"])
 
     def detect_disconnected_interface(self, interface):
         while True:
             result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
             if b"state UP" not in result.stdout:
-                print("LAN TERPUTUS... Melakukan restart.")
+                print("\033[91mLAN TERPUTUS... Melakukan restart.\033[0m")
+                time.sleep(5)
                 subprocess.run(["sudo", "reboot"])
-            time.sleep(1)
+            else:
+                print("\033[94mPS4 TERDETEKSI !!!\033[0m")
+                time.sleep(1)
 
     def main(self):
         interface = self.arguments.get('interface')
@@ -52,7 +57,7 @@ class PPPwn:
                     pppwn_thread.join()
                     break
                 else:
-                    print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
+                    print("\033[93mTIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.\033[0m")
                     time.sleep(1)
 
 if __name__ == "__main__":
