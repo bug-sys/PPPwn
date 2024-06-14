@@ -1,6 +1,6 @@
 # PPPwn - HEN PS4 11.00 ARM
 
-config.ini :
+### config.ini :
 
 [SETTINGS]
 - `pppwn_path`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
