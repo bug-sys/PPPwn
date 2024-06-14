@@ -5,7 +5,7 @@ watermark_name() {
     cat << "EOF"
 88                                                                      
 88                                                                      
-echo88
+88
 88,dPPYba,  88       88  ,adPPYb,d8    ,adPPYba, 8b       d8 ,adPPYba,  
 88P'    "8a 88       88 a8"    `Y88    I8[    "" `8b     d8' I8[    ""  
 88       d8 88       88 8b       88     `"Y8ba,   `8b   d8'   `"Y8ba,   
