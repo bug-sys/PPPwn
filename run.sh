@@ -13,7 +13,6 @@ check_connection() {
             sudo shutdown -r now
             sleep 5
         fi
-        sleep 1
     done
 }
 
