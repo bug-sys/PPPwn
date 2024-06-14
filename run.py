@@ -13,8 +13,8 @@ class PPPwn:
         return config['SETTINGS']
 
     def check_and_connect_interface(self, interface):
-        result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        if b"state UP" not in result.stdout:
+        result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode == 0 and b"state UP" not in result.stdout:
             subprocess.run(["sudo", "ifup", interface], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def run_hen(self):
@@ -36,19 +36,20 @@ class PPPwn:
 
     def detect_disconnected_interface(self, interface):
         while True:
-            result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            if b"state UP" not in result.stdout:
+            result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode == 0 and b"state UP" not in result.stdout:
                 print("\033[91mLAN TERPUTUS... Melakukan restart.\033[0m")
                 time.sleep(5)
                 subprocess.run(["sudo", "reboot"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1)
 
     def main(self):
         interface = self.arguments.get('interface')
         if interface:
             self.check_and_connect_interface(interface)
             while True:
-                result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if b"state UP" in result.stdout:
+                result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if result.returncode == 0 and b"state UP" in result.stdout:
                     print("\033[94mPS4 TERDETEKSI !!!\033[0m")
                     time.sleep(1)
                     pppwn_thread = threading.Thread(target=self.run_hen)
