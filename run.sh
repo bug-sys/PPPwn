@@ -13,8 +13,8 @@ check_connection() {
         if ! ip link show "$interface" | grep -q "state UP"; then
             echo -e "\033[91mKoneksi PS4 terputus! Memulai ulang perangkat...\033[0m"
             sudo shutdown -r now
+            sleep 5
         fi
-        sleep 5
     done
 }
 
@@ -28,6 +28,7 @@ run_pppwn() {
         kill $check_pid > /dev/null 2>&1
         if [ $? -eq 0 ]; then
             sudo shutdown -h now
+            sleep 5
         fi
     done
 }
