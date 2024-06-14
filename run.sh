@@ -4,7 +4,7 @@ source config.ini
 
 check_interface() {
     if ! ip link show "$interface" | grep -q "state UP"; then
-        sudo ifup "$interface"
+        sudo ifup "$interface" 2>/dev/null
     fi
 }
 
@@ -39,7 +39,7 @@ main_menu() {
             echo -e "\033[94mPS4 TERDETEKSI !!!\033[0m"
             run_pppwn
         else
-            echo -e "\033[93mTIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.\033[0m"
+            echo -e "\033[91mTIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.\033[0m"
             sleep 1
         fi
     done
