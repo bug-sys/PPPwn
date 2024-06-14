@@ -1,21 +1,5 @@
 #!/bin/bash
 
-watermark_name() {
-    echo -e "\033[1;35m"
-    cat << "EOF"
-88888888ba   ad88888ba          ,d8      88        88 88888888888 888b      88  
-88      "8b d8"     "8b       ,d888      88        88 88          8888b     88  
-88      ,8P Y8,             ,d8" 88      88        88 88          88 `8b    88  
-88aaaaaa8P' `Y8aaaaa,     ,d8"   88      88aaaaaaaa88 88aaaaa     88  `8b   88  
-88""""""'     `"""""8b, ,d8"     88      88""""""""88 88"""""     88   `8b  88  
-88                  `8b 8888888888888    88        88 88          88    `8b 88  
-88          Y8a     a8P          88      88        88 88          88     `8888  
-88           "Y88888P"           88      88        88 88888888888 88      `888     bug-sys - 2024 (c)
-EOF
-    echo -e "\033[0m"
-    echo
-}
-
 check_interface() {
     if ! ip link show "$interface" | grep -q "state UP"; then
         sudo ifup "$interface" 2>/dev/null
@@ -52,6 +36,7 @@ main_menu() {
     while true; do
         check_interface
         if ip link show "$interface" | grep -q "state UP"; then
+            echo -e "\033[1;32mbug-sys - 2024 (c)\033[0m"
             echo -e "\033[94mPS4 TERDETEKSI !!!\033[0m"
             run_pppwn
         else
@@ -61,8 +46,7 @@ main_menu() {
     done
 }
 
-watermark_name
-source config.ini
+source /root/PPPwn/config.ini
 main_menu
 
 exit 0
