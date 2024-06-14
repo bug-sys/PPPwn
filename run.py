@@ -13,8 +13,8 @@ class PPPwn:
         return config['SETTINGS']
 
     def check_and_connect_interface(self, interface):
-        subprocess.run(["sudo", "ip", "link", "show", interface])
-        subprocess.run(["sudo", "ifup", interface])
+        subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.DEVNULL)
+        subprocess.run(["sudo", "ifup", interface], stdout=subprocess.DEVNULL)
 
     def run_hen(self):
         command = [
@@ -40,9 +40,6 @@ class PPPwn:
                 print("\033[91mLAN TERPUTUS... Melakukan restart.\033[0m")
                 time.sleep(5)
                 subprocess.run(["sudo", "reboot"])
-            else:
-                print("\033[94mPS4 TERDETEKSI !!!\033[0m")
-                time.sleep(1)
 
     def main(self):
         interface = self.arguments.get('interface')
@@ -51,6 +48,8 @@ class PPPwn:
             while True:
                 result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
                 if b"state UP" in result.stdout:
+                    print("\033[94mPS4 TERDETEKSI !!!\033[0m")
+                    time.sleep(1)
                     pppwn_thread = threading.Thread(target=self.run_hen)
                     pppwn_thread.start()
                     self.detect_disconnected_interface(interface)
@@ -61,5 +60,7 @@ class PPPwn:
                     time.sleep(1)
 
 if __name__ == "__main__":
+    watermark = "PPPwn C++ - 2024 bug-sys"
+    print("\033[96m{}\033[0m".format(watermark))
     pppwn = PPPwn("config.ini")
     pppwn.main()
