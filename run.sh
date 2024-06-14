@@ -10,8 +10,8 @@ check_interface() {
 
 check_connection() {
     while true; do
-        if ! ping -c 1 -W 1 google.com > /dev/null 2>&1; then
-            echo -e "\033[91mKoneksi terputus! Melakukan restart perangkat...\033[0m"
+        if ! ip link show "$interface" | grep -q "state UP"; then
+            echo -e "\033[91mKoneksi PS4 terputus! Memulai ulang perangkat...\033[0m"
             sudo shutdown -r now
         fi
         sleep 5
@@ -20,16 +20,14 @@ check_connection() {
 
 run_pppwn() {
     while true; do
-        pppwn_pid=
-        /root/PPPwn/pppwn --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --wait-after-pin "$wait_after_pin" --groom-delay "$groom_delay" --buffer-size "$buffer_size" --auto-retry
+        sudo /root/PPPwn/pppwn --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --wait-after-pin "$wait_after_pin" --groom-delay "$groom_delay" --buffer-size "$buffer_size" &
         pppwn_pid=$!
         check_connection &
         check_pid=$!
         wait $pppwn_pid > /dev/null 2>&1
         kill $check_pid > /dev/null 2>&1
         if [ $? -eq 0 ]; then
-            sleep 5
-            sudo shutdown now
+            sudo shutdown -h now
         fi
     done
 }
@@ -42,7 +40,7 @@ main_menu() {
             run_pppwn
         else
             echo -e "\033[93mTIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.\033[0m"
-            sleep 5
+            sleep 1
         fi
     done
 }
