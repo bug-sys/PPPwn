@@ -1,8 +1,8 @@
 #!/bin/bash
 sudo chmod +x /root/PPPwn/pppwn
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
-sudo sed -i 's^sudo /root/PPPwn/run.sh \&^^g' /etc/rc.local
-sudo sed -i 's^exit 0^sudo /root/PPPwn/run.sh \&\n\nexit 0^g' /etc/rc.local
+sudo sed -i 's^sudo bash /root/PPPwn/run.sh.x \&^^g' /etc/rc.local
+sudo sed -i 's^exit 0^sudo bash /root/PPPwn/run.sh.x \&\n\nexit 0^g' /etc/rc.local
 echo "*******************************************"
 echo -e '\033[36mPenginstalan selesai,\033[33m Mematikan STB...\033[0m'
 echo "*******************************************"
