@@ -1,69 +1,70 @@
 import subprocess
 import time
 import threading
+import psutil
 
-# Fungsi untuk mencetak pesan dengan warna kuning
-def print_yellow(message):
-    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    formatted_message = f"[DEBUG] {timestamp} - {message}"
-    print("\033[93m" + formatted_message + "\033[0m")
+class PS4HEN:
+    def __init__(self):
+        self.pppwn_path = "./PPPwn/pppwn"
+        self.fw_value = "1100"
+        self.stage1_bin = "./PPPwn/stage1.bin"
+        self.stage2_bin = "./PPPwn/stage2.bin"
 
-# Fungsi untuk memeriksa dan menyambungkan eth0
-def periksa_eth0():
-    print_yellow("Memeriksa dan menyambungkan eth0...")
-    subprocess.run(["sudo", "ip", "link", "show", "eth0"])
-    subprocess.run(["sudo", "ifup", "eth0"])
+    def print(self, message):
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_message = f"{timestamp} - {message}"
+        print(formatted_message)
 
-# Fungsi untuk menjalankan pppwn
-def jalankan_pppwn():
-    while True:
-        print_yellow("Menjalankan PPPwn...")
-        result = subprocess.run([
-            "sudo", "/root/PPPwn/pppwn",
-            "-i", "eth0",
-            "--fw", "1100",
-            "-s1", "/root/PPPwn/stage1.bin",
-            "-s2", "/root/PPPwn/stage2.bin",
-            "-t", "10",
-            "-a",
-            "-wap", "1",
-            "-gd", "8",
-            "-bs", "20480",
-            "-nw",
-            "-rs"
-        ])
-        if result.returncode == 0:
-            print_yellow("PPPwn berhasil dilakukan.")
-            subprocess.run(["sudo", "shutdown", "now"])
-            break  # Keluar dari loop jika PPPwn berhasil
+    def check_interface(self):
+        interfaces = psutil.net_if_addrs().keys()
+        if 'eth0' in interfaces:
+            self.interface = 'eth0'
+        elif 'end0' in interfaces:
+            self.interface = 'end0'
         else:
-            print_yellow("PPPwn gagal dilakukan. Akan mencoba lagi.")
+            exit(1)
 
-# Fungsi untuk mendeteksi jika koneksi terputus
-def deteksi_macet():
-    print_yellow("Memulai deteksi koneksi...")
-    while True:
-        result = subprocess.run(["sudo", "ip", "link", "show", "eth0"], capture_output=True)
-        if b"state UP" not in result.stdout:
-            print_yellow("Koneksi eth0 terputus saat PPPwn sedang berjalan. Melakukan restart...")
-            subprocess.run(["sudo", "reboot"])
-        else:
-            print_yellow("Koneksi eth0 masih terhubung.")
-        time.sleep(1)
+    def run_pppwn(self):
+        while True:
+            result = subprocess.run([
+                "sudo", self.pppwn_path,
+                "-i", self.interface,
+                "--fw", self.fw_value,
+                "-s1", self.stage1_bin,
+                "-s2", self.stage2_bin,
+                "-t",
+                "-a"
+            ])
+            if result.returncode == 0:
+                subprocess.run(["sudo", "shutdown", "now"])
+                break
 
-# Skrip utama
-if __name__ == "__main__":
-    print_yellow("Memulai skrip...")
+    def detect_timeout(self):
+        while True:
+            result = subprocess.run(["sudo", "ip", "link", "show", self.interface], capture_output=True)
+            if b"state UP" not in result.stdout:
+                self.print("Koneksi LAN terputus. Melakukan restart...")
+                subprocess.run(["sudo", "reboot"])
+            else:
+                time.sleep(1)
+
+def main():
+    ps4_hen = PS4HEN()
+    ps4_hen.check_interface()
+    
     while True:
-        periksa_eth0()
-        result = subprocess.run(["sudo", "ip", "link", "show", "eth0"], capture_output=True)
+        result = subprocess.run(["sudo", "ip", "link", "show", ps4_hen.interface], capture_output=True)
         if b"state UP" in result.stdout:
-            print_yellow("PS4 TERDETEKSI !!!")
-            print_yellow("PS4 terdeteksi. Melakukan PPPwn...")
-            pppwn_thread = threading.Thread(target=jalankan_pppwn)
+            ps4_hen.print("PS4 TERDETEKSI !!!")
+            pppwn_thread = threading.Thread(target=ps4_hen.run_pppwn)
             pppwn_thread.start()
-            deteksi_macet()
-            pppwn_thread.join()  # Pastikan proses PPPwn selesai sebelum lanjut ke iterasi berikutnya
+            timeout_thread = threading.Thread(target=ps4_hen.detect_timeout)
+            timeout_thread.start()
+            pppwn_thread.join()
+            timeout_thread.join()
         else:
-            print_yellow("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB... Mencoba lagi.")
+            ps4_hen.print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB... Mencoba lagi.")
             time.sleep(5)
+
+if __name__ == "__main__":
+    main()
