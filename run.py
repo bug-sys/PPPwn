@@ -1,70 +1,64 @@
 import subprocess
 import time
 import threading
-import psutil
 
-class PS4HEN:
-    def __init__(self):
-        self.pppwn_path = "./PPPwn/pppwn"
-        self.fw_value = "1100"
-        self.stage1_bin = "./PPPwn/stage1.bin"
-        self.stage2_bin = "./PPPwn/stage2.bin"
+class PPPwn:
+    def __init__(self, arguments_file):
+        self.arguments = self.read_arguments(arguments_file)
 
-    def print(self, message):
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        formatted_message = f"{timestamp} - {message}"
-        print(formatted_message)
+    def read_arguments(self, filename):
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+        argumen = {}
+        for line in lines:
+            key, value = line.strip().split(': ')
+            argumen[key] = value
+        return argumen
 
-    def check_interface(self):
-        interfaces = psutil.net_if_addrs().keys()
-        if 'eth0' in interfaces:
-            self.interface = 'eth0'
-        elif 'end0' in interfaces:
-            self.interface = 'end0'
-        else:
-            exit(1)
+    def check_and_connect_interface(self, interface):
+        subprocess.run(["sudo", "ip", "link", "show", interface])
+        subprocess.run(["sudo", "ifup", interface])
 
-    def run_pppwn(self):
+    def run_hen(self):
+        command = [
+            "sudo", self.arguments['pppwn_path'],
+            "-i", self.arguments['--interface'],
+            "--fw", self.arguments['--fw'],
+            "--stage1", self.arguments['--stage1'],
+            "--stage2", self.arguments['--stage2'],
+            "--timeout", self.arguments['--timeout'],
+            "--wait-after-pin", self.arguments['--wait-after-pin'],
+            "--groom-delay", self.arguments['--groom-delay'],
+            "--buffer-size", self.arguments['--buffer-size'],
+            "-a" if self.arguments.get('--auto-retry') == 'true' else '',
+            "-nw" if self.arguments.get('--no-wait-padi') == 'true' else '',
+            "-rs" if self.arguments.get('--real-sleep') == 'true' else ''
+        ]
+        subprocess.run(command)
+
+    def detect_disconnected_interface(self, interface):
         while True:
-            result = subprocess.run([
-                "sudo", self.pppwn_path,
-                "-i", self.interface,
-                "--fw", self.fw_value,
-                "-s1", self.stage1_bin,
-                "-s2", self.stage2_bin,
-                "-t",
-                "-a"
-            ])
-            if result.returncode == 0:
-                subprocess.run(["sudo", "shutdown", "now"])
-                break
-
-    def detect_timeout(self):
-        while True:
-            result = subprocess.run(["sudo", "ip", "link", "show", self.interface], capture_output=True)
+            result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
             if b"state UP" not in result.stdout:
-                self.print("Koneksi LAN terputus. Melakukan restart...")
+                print("LAN TERPUTUS... Melakukan restar.")
                 subprocess.run(["sudo", "reboot"])
-            else:
-                time.sleep(1)
+            time.sleep(1)
 
-def main():
-    ps4_hen = PS4HEN()
-    ps4_hen.check_interface()
-    
-    while True:
-        result = subprocess.run(["sudo", "ip", "link", "show", ps4_hen.interface], capture_output=True)
-        if b"state UP" in result.stdout:
-            ps4_hen.print("PS4 TERDETEKSI !!!")
-            pppwn_thread = threading.Thread(target=ps4_hen.run_pppwn)
-            pppwn_thread.start()
-            timeout_thread = threading.Thread(target=ps4_hen.detect_timeout)
-            timeout_thread.start()
-            pppwn_thread.join()
-            timeout_thread.join()
+    def run_script(self):
+        interface = self.arguments.get('--interface')
+        if interface:
+            self.check_and_connect_interface(interface)
+            result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
+            if b"state UP" in result.stdout:
+                pppwn_thread = threading.Thread(target=self.run_hen)
+                pppwn_thread.start()
+                self.detect_disconnected_interface(interface)
+                pppwn_thread.join()
+            else:
+                print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
         else:
-            ps4_hen.print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB... Mencoba lagi.")
-            time.sleep(5)
+            print("Antarmuka jaringan tidak ditentukan dalam arguments.txt.")
 
 if __name__ == "__main__":
-    main()
+    pppwn = PPPwn("arguments.txt")
+    pppwn.run_script()
