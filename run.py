@@ -38,7 +38,7 @@ class PPPwn:
         while True:
             result = subprocess.run(["sudo", "ip", "link", "show", interface], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0 and b"state UP" not in result.stdout:
-                print("\033[91mLAN TERPUTUS... Melakukan restart.\033[0m")
+                print("\033[91mKoneksi LAN PS4 terputus... Melakukan restart.\033[0m")
                 time.sleep(5)
                 subprocess.run(["sudo", "reboot"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(1)
