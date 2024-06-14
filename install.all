@@ -1,9 +1,9 @@
 #!/bin/bash
 sudo chmod +x /root/PPPwn/pppwn
-sudo chmod +x /root/PPPwn/run.py
+sudo chmod +x /root/PPPwn/run
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
-sudo sed -i 's^sudo /root/PPPwn/run.py \&^^g' /etc/rc.local
-sudo sed -i 's^exit 0^sudo /root/PPPwn/run.py \&\n\nexit 0^g' /etc/rc.local
+sudo sed -i 's^sudo /root/PPPwn/run \&^^g' /etc/rc.local
+sudo sed -i 's^exit 0^sudo /root/PPPwn/run \&\n\nexit 0^g' /etc/rc.local
 echo "*******************************************"
 echo -e '\033[36mPenginstalan selesai,\033[33m Mematikan STB...\033[0m'
 echo "*******************************************"
