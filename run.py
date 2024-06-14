@@ -3,8 +3,8 @@ import time
 import threading
 
 class PPPwn:
-    def __init__(self, arguments_file):
-        self.arguments = self.read_arguments(arguments_file)
+    def __init__(self, config_file):
+        self.arguments = self.read_arguments(config_file)
 
     def read_arguments(self, filename):
         with open(filename, 'r') as file:
@@ -58,5 +58,5 @@ class PPPwn:
                 print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
 
 if __name__ == "__main__":
-    pppwn = PPPwn("arguments.ini")
+    pppwn = PPPwn("config.ini")
     pppwn.main()
