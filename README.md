@@ -1,4 +1,4 @@
-# PPPwn - HEN PS4 11.00 STB
+# PPPwn C++ - HEN PS4 11.00 STB
 
 ### config.ini :
 - `interface`: antarmuka jaringan yang terhubung ke ps4 (default = `eth0`)
