@@ -45,14 +45,17 @@ class PPPwn:
         interface = self.arguments.get('interface')
         if interface:
             self.check_and_connect_interface(interface)
-            result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
-            if b"state UP" in result.stdout:
-                pppwn_thread = threading.Thread(target=self.run_hen)
-                pppwn_thread.start()
-                self.detect_disconnected_interface(interface)
-                pppwn_thread.join()
-            else:
-                print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
+            while True:
+                result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
+                if b"state UP" in result.stdout:
+                    pppwn_thread = threading.Thread(target=self.run_hen)
+                    pppwn_thread.start()
+                    self.detect_disconnected_interface(interface)
+                    pppwn_thread.join()
+                    break
+                else:
+                    print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
+                    time.sleep(1)
 
 if __name__ == "__main__":
     pppwn = PPPwn("config.ini")
