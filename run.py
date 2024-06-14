@@ -40,11 +40,11 @@ class PPPwn:
         while True:
             result = subprocess.run(["sudo", "ip", "link", "show", interface], capture_output=True)
             if b"state UP" not in result.stdout:
-                print("LAN TERPUTUS... Melakukan restar.")
+                print("LAN TERPUTUS... Melakukan restart.")
                 subprocess.run(["sudo", "reboot"])
             time.sleep(1)
 
-    def run_script(self):
+    def main(self):
         interface = self.arguments.get('--interface')
         if interface:
             self.check_and_connect_interface(interface)
@@ -56,9 +56,7 @@ class PPPwn:
                 pppwn_thread.join()
             else:
                 print("TIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.")
-        else:
-            print("Antarmuka jaringan tidak ditentukan dalam arguments.txt.")
 
 if __name__ == "__main__":
-    pppwn = PPPwn("arguments.txt")
-    pppwn.run_script()
+    pppwn = PPPwn("arguments.ini")
+    pppwn.main()
