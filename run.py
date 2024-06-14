@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import threading
 import configparser
 import subprocess
