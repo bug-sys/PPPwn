@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Load configuration from config.ini
 source config.ini
 
 check_interface() {
@@ -9,7 +8,7 @@ check_interface() {
     fi
 }
 
-run_hen() {
+run_pppwn() {
     while true; do
         pppwn_pid=
         /root/PPPwn/pppwn --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --wait-after-pin "$wait_after_pin" --groom-delay "$groom_delay" --buffer-size "$buffer_size" --auto-retry
@@ -22,19 +21,19 @@ run_hen() {
     done
 }
 
-main() {
+main_menu() {
     while true; do
         check_interface
         if ip link show "$interface" | grep -q "state UP"; then
-            echo -e "\033[1;34m[+] PS4 TERDETEKSI !!!\033[0m"
-            run_hen
+            echo -e "\033[94mPS4 TERDETEKSI !!!\033[0m"
+            run_pppwn
         else
-            echo -ne "\033[91m[-] TIDAK TERHUBUNG... PASTIKAN KONEKSI LAN PS4 ANDA TERHUBUNG DENGAN STB... MENCOBA LAGI !!!\033[0m"
+            echo -e "\033[93mTIDAK TERHUBUNG... Pastikan koneksi LAN PS4 terhubung dengan STB.\033[0m"
             sleep 5
         fi
     done
 }
 
-main
+main_menu
 
 exit 0
