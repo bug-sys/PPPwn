@@ -1,0 +1,12 @@
+--pppwn_path: /root/PPPwn/pppwn
+--interface: eth0
+--fw: 1100
+--stage1: /root/PPPwn/stage1.bin
+--stage2: /root/PPPwn/stage2.bin
+--timeout: 0
+--wait-after-pin: 1
+--groom-delay: 4
+--buffer-size: 0
+--auto-retry: true
+--no-wait-padi: false
+--real-sleep: false
