@@ -27,9 +27,7 @@ class PPPwn:
             "--wait-after-pin", self.arguments['wait_after_pin'],
             "--groom-delay", self.arguments['groom_delay'],
             "--buffer-size", self.arguments['buffer_size'],
-            "-a", self.arguments['auto_retry'],
-            "-nw", self.arguments['no_wait_padi'],
-            "-rs", self.arguments['real_sleep'],
+            "-a",
         ]
         subprocess.run(command)
 
