@@ -1,10 +1,7 @@
 # PPPwn - HEN PS4 11.00 ARM
 
 ### config.ini :
-
-[SETTINGS]
-- `pppwn_path`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
-- `interface`: antarmuka jaringan yang terhubung ke ps4
+- `interface`: antarmuka jaringan yang terhubung ke ps4 (default = `eth0`)
 - `fw`: versi firmware ps4 target (default = `1100`)
 - `stage1`: jalur ke payload stage1 (default = `/root/PPPwn/stage1.bin`)
 - `stage2`: jalur ke payload stage2 (default = `/root/PPPwn/stage2.bin`)
@@ -12,9 +9,8 @@
 - `wait_after_pin`: waktu tunggu dalam hitungan detik setelah penyematan CPU putaran pertama (default = `1`)
 - `groom_delay`: tunggu 1 md setiap putaran `groom-delay` selama perawatan Heap (default = `4`)
 - `buffer_size`: Ukuran buffer PCAP dalam byte, kurang dari 100 menunjukkan nilai default (biasanya 2MB) (default = `0`)
-- `-a`: mencoba lagi secara otomatis ketika gagal atau batas waktu habis
 
-INSTALL :
+### INSTALL :
 ```sh
 sudo apt install git -y
 ```
