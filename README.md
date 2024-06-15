@@ -2,7 +2,7 @@
 
 ### config.ini :
 - `pppwn`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
-- `interface`: antarmuka jaringan yang terhubung ke ps4 (default = `eth0`)
+- `interface`: antarmuka jaringan yang terhubung ke ps4 (`eth0` *ubuntu , debian 12 kebawah) (`end0` *debian 13) (default = `eth0`)
 - `fw`: versi firmware ps4 target 0900 / 1100 (default = `1100`)
 - `stage1`: jalur ke payload stage1 (default = `/root/PPPwn/1100/stage1.bin`)
 - `stage2`: jalur ke payload stage2 (default = `/root/PPPwn/1100/stage2.bin`)
