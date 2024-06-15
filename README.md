@@ -23,6 +23,5 @@ sudo bash /root/PPPwn/install.all
 ```
 Credit : 
 - TheOfficialFloW
-- LightningMods
 - SiSTR0
 - xfangfang
