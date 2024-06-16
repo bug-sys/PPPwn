@@ -21,7 +21,7 @@ git clone --recursive --depth 1 https://github.com/bug-sys/PPPwn
 ```sh
 sudo bash /root/PPPwn/install.all
 ```
-Credit : 
-- TheOfficialFloW
-- SiSTR0
-- xfangfang
+###Credit : 
+_TheOfficialFloW
+LightningMods
+SiSTR0_
