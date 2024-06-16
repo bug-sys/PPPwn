@@ -35,7 +35,6 @@ main_menu() {
     while true; do
         check_interface
         if ip link show "$interface" | grep -q "state UP"; then
-            echo -e "\033[1;32mbug-sys - 2024 (c)\033[0m"
             echo -e "\033[94mPS4 TERDETEKSI !!!\033[0m"
             run_pppwn
         else
