@@ -11,7 +11,7 @@
 - `groom_delay`: tunggu 1 md setiap putaran `groom-delay` selama perawatan Heap (default = `4`)
 - `buffer_size`: Ukuran buffer PCAP dalam byte, kurang dari 100 menunjukkan nilai default (biasanya 2MB) (default = `0`)
 
-### INSTALL :
+### Install :
 ```sh
 sudo apt install git -y
 ```
