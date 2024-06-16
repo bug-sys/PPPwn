@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Fungsi untuk memastikan skrip pppwn dapat dieksekusi
+ensure_pppwn_executable() {
+    if [ ! -x "/root/PPPwn/pppwn" ]; then
+        sudo chmod +x /root/PPPwn/pppwn
+    fi
+}
+
 check_interface() {
     if ! ip link show "$interface" | grep -q "state UP"; then
         sudo ifup "$interface" 2>/dev/null
@@ -18,7 +25,7 @@ check_connection() {
 
 run_pppwn() {
     while true; do
-        sudo "$pppwn" --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --groom-delay "$groom_delay" -a &
+        sudo /root/PPPwn/pppwn --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --groom-delay "$groom_delay" -a &
         pppwn_pid=$!
         check_connection &
         check_pid=$!
@@ -32,6 +39,7 @@ run_pppwn() {
 }
 
 main_menu() {
+    ensure_pppwn_executable
     while true; do
         check_interface
         if ip link show "$interface" | grep -q "state UP"; then
@@ -44,7 +52,10 @@ main_menu() {
     done
 }
 
+# Sumberkan file konfigurasi
 source /root/PPPwn/config.ini
+
+# Titik masuk dari skrip
 main_menu
 
 exit 0
