@@ -19,7 +19,7 @@ sudo bash /root/PPPwn/install.all
 - Jika konsol PS4 Anda tidak mengenali file goldhen.bin , periksa apakah file goldhen.bin ada di drive USB.
 - Dan jika sudah ada notif HEN BERHASIL kedepan nya tidak memerlukan drive USB dan dapat langsung melanjutkan nyalakan STB untuk aktifasi hen.
 
-### config.ini :
+### pengaturan config.ini :
 - `pppwn`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
 - `interface`: antarmuka jaringan yang terhubung ke PS4 `eth0` ubuntu - debian 12 kebawah , `end0` debian 13 (default = `eth0`)
 - `fw`: versi firmware PS4 target 0900 / 1100 (default = `1100`)
