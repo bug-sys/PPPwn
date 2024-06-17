@@ -1,13 +1,5 @@
 # PPPwn C++ - PS4 HEN STB
 
-### instalasi goldhen.bin
-- Menggunakan PC atau Mac, format drive USB sebagai FAT32 atau exFAT.
-- Unduh file PPPwn dan salin goldhen.bin ke drive USB tanpa folder.
-- Colokkan drive USB yang berisi file goldhen.bin ke konsol PS4.
-- Mulai konsol PS4 dan nyalakan STB, tunggu sampai proses selesai, jika sudah selesai akan ada notif HEN BERHASIL.
-- Jika konsol PS4 Anda tidak mengenali file goldhen.bin , periksa apakah file goldhen.bin ada di drive USB.
-- Dan jika sudah ada notif HEN BERHASIL kedepan nya tidak memerlukan drive USB dan dapat langsung melanjutkan nyalakan STB untuk aktifasi hen.
-
 ### instalasi STB :
 ```sh
 sudo apt install git -y
@@ -18,6 +10,14 @@ git clone --recursive --depth 1 https://github.com/bug-sys/PPPwn
 ```sh
 sudo bash /root/PPPwn/install.all
 ```
+
+### instalasi goldhen.bin
+- Menggunakan PC atau Mac, format drive USB sebagai FAT32 atau exFAT.
+- Unduh file PPPwn dan salin goldhen.bin ke drive USB tanpa folder.
+- Colokkan drive USB yang berisi file goldhen.bin ke konsol PS4.
+- Mulai konsol PS4 dan nyalakan STB, tunggu sampai proses selesai, jika sudah selesai akan ada notif HEN BERHASIL.
+- Jika konsol PS4 Anda tidak mengenali file goldhen.bin , periksa apakah file goldhen.bin ada di drive USB.
+- Dan jika sudah ada notif HEN BERHASIL kedepan nya tidak memerlukan drive USB dan dapat langsung melanjutkan nyalakan STB untuk aktifasi hen.
 
 ### config.ini :
 - `pppwn`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
