@@ -20,7 +20,7 @@ sudo bash /root/PPPwn/install.all
 - Dan jika sudah ada notif HEN BERHASIL kedepan nya tidak memerlukan drive USB dan dapat langsung melanjutkan nyalakan STB untuk aktifasi hen.
 
 ### pengaturan config.ini :
-- `pppwn`: tentukan lokasi pppwn (default = `/root/PPPwn/pppwn`)
+- `pppwn`: tentukan lokasi pppwn (default = `/root/PPPwn/mpcorenovfp/pppwn`)
 - `interface`: antarmuka jaringan yang terhubung ke PS4 `eth0` ubuntu - debian 12 kebawah , `end0` debian 13 (default = `eth0`)
 - `fw`: versi firmware PS4 target 0900 / 1100 (default = `1100`)
 - `stage1`: jalur ke payload stage1 (default = `/root/PPPwn/1100/stage1.bin`)
