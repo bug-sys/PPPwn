@@ -1,4 +1,4 @@
-# PPPwn C++ - PS4 HEN STB
+# PPPwn C++ PS4 HEN STB
 
 ### instalasi STB :
 ```sh
