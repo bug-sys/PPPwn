@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Fungsi untuk memastikan skrip pppwn dapat dieksekusi
-ensure_pppwn_executable() {
-    if [ ! -x "/root/PPPwn/mpcorenovfp/pppwn" ]; then
-    if [ ! -x "/root/PPPwn/cortex_a7/pppwn" ]; then
-        sudo chmod +x /root/PPPwn/mpcorenovfp/pppwn
-        sudo chmod +x /root/PPPwn/cortex_a7/pppwn
-    fi
-}
-
 check_interface() {
     if ! ip link show "$interface" | grep -q "state UP"; then
         sudo ifup "$interface" 2>/dev/null
