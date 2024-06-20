@@ -2,7 +2,8 @@
 
 # Fungsi untuk memastikan skrip pppwn dapat dieksekusi
 ensure_pppwn_executable() {
-    if [ ! -x "/root/PPPwn/pppwn" ]; then
+    if [ ! -x "/root/PPPwn/mpcorenovfp/pppwn" ]; then
+    if [ ! -x "/root/PPPwn/cortex_a7/pppwn" ]; then
         sudo chmod +x /root/PPPwn/mpcorenovfp/pppwn
         sudo chmod +x /root/PPPwn/cortex_a7/pppwn
     fi
