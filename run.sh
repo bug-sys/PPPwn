@@ -32,7 +32,6 @@ run_pppwn() {
 }
 
 main_menu() {
-    ensure_pppwn_executable
     while true; do
         check_interface
         if ip link show "$interface" | grep -q "state UP"; then
