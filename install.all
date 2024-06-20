@@ -1,4 +1,6 @@
 #!/bin/bash
+sudo chmod +x /root/PPPwn/cortex_a7/pppwn
+sudo chmod +x /root/PPPwn/mpcorenovfp/pppwn
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
 sudo sed -i 's^sudo bash /root/PPPwn/run.sh \&^^g' /etc/rc.local
 sudo sed -i 's^exit 0^sudo bash /root/PPPwn/run.sh \&\n\nexit 0^g' /etc/rc.local
