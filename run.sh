@@ -18,7 +18,7 @@ check_connection() {
 
 run_pppwn() {
     while true; do
-        sudo /root/PPPwn/pppwn --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --groom-delay "$groom_delay" -a &
+        sudo "$pppwn" --interface "$interface" --fw "$fw" --stage1 "$stage1" --stage2 "$stage2" --timeout "$timeout" --groom-delay "$groom_delay" -a &
         pppwn_pid=$!
         check_connection &
         check_pid=$!
