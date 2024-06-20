@@ -1,6 +1,6 @@
 ### instalasi :
 ```sh
-cd /root/PPPwn/py/
+cd /root/PPPwn/py
 ```
 ```sh
 sudo apt install python3-pip -y
