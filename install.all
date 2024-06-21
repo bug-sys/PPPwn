@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo chmod +x /root/PPPwn/pppwnold/pppwn
 sudo chmod +x /root/PPPwn/cortex_a7/pppwn
 sudo chmod +x /root/PPPwn/mpcorenovfp/pppwn
 sudo sed -i 's^"exit 0"^"exit"^g' /etc/rc.local
