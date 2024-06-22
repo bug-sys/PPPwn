@@ -7,7 +7,7 @@ def main():
     parser.add_argument('--interface', required=True)
     parser.add_argument('--fw',
                         choices=[
-                            '700','701','702','750', '751', '755',
+                            '700', '701', '702', '750', '751', '755',
                             '800', '801', '803', '850', '852',
                             '900', '903', '904', '950', '951', '960',
                             '1000', '1001', '1050', '1070', '1071',
@@ -20,11 +20,15 @@ def main():
 
     print("\033[1;32mPorting oleh bug-sys 2024 (c)\033[0m")
 
-    with open(args.stage1, mode='rb') as f:
-        stage1 = f.read()
+    try:
+        with open(args.stage1, mode='rb') as f:
+            stage1 = f.read()
 
-    with open(args.stage2, mode='rb') as f:
-        stage2 = f.read()
+        with open(args.stage2, mode='rb') as f:
+            stage2 = f.read()
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        return 1
 
     if args.fw in ('700', '701', '702'):
         offs = OffsetsFirmware_700_702()
@@ -50,17 +54,7 @@ def main():
         raise ValueError("Versi firmware tidak didukung")
 
     exploit = Exploit(offs, args.interface, stage1, stage2)
-
-    while True:
-        try:
-            exploit.run()
-        except SystemExit as e:
-            if e.code == 1:
-                continue
-            elif e.code == 0:
-                break
-            else:
-                raise
+    exploit.run()
 
     return 0
 
