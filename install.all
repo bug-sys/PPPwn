@@ -1,6 +1,5 @@
 #!/bin/bash
 sudo chmod +x /root/PPPwn/mpcorenovfp_old/pppwn
-sudo chmod +x /root/PPPwn/py_pppwn/pppwn
 sudo chmod +x /root/PPPwn/aarch64_linux_musl/pppwn
 sudo chmod +x /root/PPPwn/cortex_a7/pppwn
 sudo chmod +x /root/PPPwn/mpcorenovfp/pppwn
