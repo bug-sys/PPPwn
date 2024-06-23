@@ -14,8 +14,8 @@ def main():
                             '1100'
                         ],
                         default='1100')
-    parser.add_argument('--stage1', default='/root/PPPwn/1100/stage1.bin')
-    parser.add_argument('--stage2', default='/root/PPPwn/1100/stage2.bin')
+    parser.add_argument('--stage1', default='/root/PPPwn-py/1100/stage1.bin')
+    parser.add_argument('--stage2', default='/root/PPPwn-py/1100/stage2.bin')
     args = parser.parse_args()
 
     print("\033[1;32mPorting oleh bug-sys 2024 (c)\033[0m")
