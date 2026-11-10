@@ -12,6 +12,7 @@ sudo bash /root/PPPwn/install.all
 ```
 
 ### instalasi goldhen.bin
+- https://miror.surge.sh/
 - Menggunakan PC atau Mac, format drive USB sebagai FAT32 atau exFAT.
 - Unduh file PPPwn dan salin goldhen.bin ke drive USB tanpa folder.
 - Colokkan drive USB yang berisi file goldhen.bin ke konsol PS4.
