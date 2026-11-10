@@ -1,4 +1,4 @@
-# https://miror.surge.sh
+# PS5 HEN 7 - 13.60 >>> https://miror.surge.sh
 
 # PPPwn C++ PS4 HEN STB
 
